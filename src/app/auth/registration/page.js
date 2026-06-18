@@ -2,7 +2,7 @@
 "use client";
 
 import { authClient } from "@/app/lib/auth-client";
-import { Card, Separator } from "@heroui/react";
+import { Card, Radio, RadioGroup, Separator } from "@heroui/react";
 import {
     Button,
     Description,
@@ -33,7 +33,9 @@ const RegistrationPage = () => {
             password: user.password,
             name: user.name,
             image: user.image,
+            role: user.role,
         });
+        console.log(data);
 
         if (data) {
             toast.success("Account Created Successfully!");
@@ -81,7 +83,7 @@ const RegistrationPage = () => {
                 >
                     Start your adventure with{" "}
                     <span style={{ color: "var(--primary)" }}>
-                        Drive Nest
+                        MediNexa
                     </span>
                 </p>
 
@@ -113,6 +115,35 @@ const RegistrationPage = () => {
                         <FieldError />
                     </TextField>
 
+                    <RadioGroup
+                        name="role"
+                        defaultValue="patient"
+                        isRequired
+                        className="w-full"
+                    >
+                        <Label>Account Type</Label>
+
+                        <div className=" mt-2">
+                            <Radio value="patient">
+                                <Radio.Content>
+                                    <Radio.Control>
+                                        <Radio.Indicator />
+                                    </Radio.Control>
+                                    Patient
+                                </Radio.Content>
+                            </Radio>
+
+                            <Radio value="doctor">
+                                <Radio.Content>
+                                    <Radio.Control>
+                                        <Radio.Indicator />
+                                    </Radio.Control>
+                                    Doctor
+                                </Radio.Content>
+                            </Radio>
+                        </div>
+                    </RadioGroup>
+
                     <TextField
                         isRequired
                         minLength={6}
@@ -123,12 +154,12 @@ const RegistrationPage = () => {
                                 return "Password must be at least 6 characters";
                             }
 
-                            if (!/[A-Z]/.test(value)) {
-                                return "Password must contain at least one uppercase letter";
+                            if (!/[0-9]/.test(value)) {
+                                return "Password must contain at least one number";
                             }
 
-                            if (!/[a-z]/.test(value)) {
-                                return "Password must contain at least one lowercase letter";
+                            if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+                                return "Password must contain at least one special character";
                             }
 
                             return undefined;
@@ -160,7 +191,7 @@ const RegistrationPage = () => {
                         </div>
 
                         <Description>
-                            Must be at least 6 characters with 1 uppercase and 1 lowercase
+                            Must be at least 6 characters with one number and one special character
                         </Description>
 
                         <FieldError />

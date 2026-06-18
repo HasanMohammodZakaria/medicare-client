@@ -114,7 +114,7 @@ const LoginPage = () => {
                         </div>
 
                         <Description>
-                            Must be at least 6 characters with 1 uppercase and 1 lowercase
+                            Must be at least 6 characters with one number and one special character
                         </Description>
 
                         <FieldError />
