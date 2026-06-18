@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { Button, Avatar } from "@heroui/react";
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import Bars from "@gravity-ui/icons/Bars";
 import Xmark from "@gravity-ui/icons/Xmark";
@@ -19,6 +19,7 @@ export default function Navbar() {
   const profileRef = useRef(null);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
@@ -116,22 +117,22 @@ export default function Navbar() {
               </div>
             ) : !user ? (
               // 🔴 LOGIN BUTTON (NOW FIXED)
-              <Button
-                as={Link}
-                href="/auth/login"
-                className="font-semibold px-5"
-                style={{
-                  background: "var(--primary)",
-                  color: "#fff",
-                }}
-              >
-                Login / Register
-              </Button>
+              <Link href="/auth/login">
+                <Button
+                  className="font-semibold px-5"
+                  style={{
+                    background: "var(--primary)",
+                    color: "#fff",
+                  }}
+                >
+                  Login / Register
+                </Button>
+              </Link>
             ) : (
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileMenu(!profileMenu)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <Avatar>
                     <Avatar.Image
@@ -157,7 +158,7 @@ export default function Navbar() {
 
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-3 text-red-400 hover:bg-card-hover"
+                      className="w-full text-left px-4 py-3 text-red-400 hover:bg-card-hover cursor-pointer"
                     >
                       Logout
                     </button>
