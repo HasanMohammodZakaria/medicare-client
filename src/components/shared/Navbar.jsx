@@ -10,6 +10,7 @@ import Bars from "@gravity-ui/icons/Bars";
 import Xmark from "@gravity-ui/icons/Xmark";
 import Sun from "@gravity-ui/icons/Sun";
 import Moon from "@gravity-ui/icons/Moon";
+import { authClient } from "@/app/lib/auth-client";
 
 export default function Navbar() {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -19,12 +20,25 @@ export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
+
   // ======================
   // USER (IMPORTANT FIX)
   // null = logged out
   // object = logged in
   // ======================
-  const user = null; // 🔥 এখন Login button দেখাবে
+  //const user = null; // 🔥 এখন Login button দেখাবে
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -95,11 +109,16 @@ export default function Navbar() {
             </Button>
 
             {/* ================= AUTH ================= */}
-            {!user ? (
+            {isPending ? (
+              <div className="flex items-center gap-3 border border-gray-200 px-4 py-2 rounded-xl animate-pulse">
+                <div className="w-9 h-9 rounded-full bg-gray-200" />
+                <div className="w-24 h-4 rounded bg-gray-200" />
+              </div>
+            ) : !user ? (
               // 🔴 LOGIN BUTTON (NOW FIXED)
               <Button
                 as={Link}
-                href="/login"
+                href="/auth/login"
                 className="font-semibold px-5"
                 style={{
                   background: "var(--primary)",
@@ -109,13 +128,21 @@ export default function Navbar() {
                 Login / Register
               </Button>
             ) : (
-              // 🟢 USER DROPDOWN
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileMenu(!profileMenu)}
                   className="flex items-center gap-2"
                 >
-                  <Avatar size="sm" name={user.name} showFallback />
+                  <Avatar>
+                    <Avatar.Image
+                      referrerPolicy="no-referrer"
+                      alt={user?.name}
+                      src={user?.image}
+                    />
+                    <Avatar.Fallback>
+                      {user?.name.charAt(0)?.toUpperCase()}
+                    </Avatar.Fallback>
+                  </Avatar>
                   <span className="text-sub font-medium">{user.name}</span>
                 </button>
 
@@ -128,7 +155,10 @@ export default function Navbar() {
                       Dashboard
                     </Link>
 
-                    <button className="w-full text-left px-4 py-3 text-red-400 hover:bg-card-hover">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-3 text-red-400 hover:bg-card-hover"
+                    >
                       Logout
                     </button>
                   </div>
@@ -188,10 +218,15 @@ export default function Navbar() {
             ))}
 
             <div className="pt-5 border-t border-base">
-              {!user ? (
+              {isPending ? (
+                <div className="flex items-center gap-3 animate-pulse">
+                  <div className="w-9 h-9 rounded-full bg-gray-200" />
+                  <div className="w-24 h-4 rounded bg-gray-200" />
+                </div>
+              ) : !user ? (
                 <Button
                   as={Link}
-                  href="/login"
+                  href="/auth/login"
                   className="w-full font-semibold"
                   style={{
                     background: "var(--primary)",
@@ -201,13 +236,32 @@ export default function Navbar() {
                   Login / Register
                 </Button>
               ) : (
-                <>
+                <div>
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <Avatar.Image
+                        referrerPolicy="no-referrer"
+                        alt={user?.name}
+                        src={user?.image}
+                      />
+                      <Avatar.Fallback>
+                        {user?.name.charAt(0)?.toUpperCase()}
+                      </Avatar.Fallback>
+                    </Avatar>
+
+                    <span className="font-medium">{user?.name || "User"}</span>
+                  </div>
                   <Link href="/dashboard" className="block py-3 text-sub">
                     Dashboard
                   </Link>
 
-                  <button className="block py-3 text-red-400">Logout</button>
-                </>
+                  <button
+                    onClick={handleLogout}
+                    className="block py-3 text-red-400"
+                  >
+                    Logout
+                  </button>
+                </div>
               )}
             </div>
           </div>
