@@ -225,17 +225,17 @@ export default function Navbar() {
                   <div className="w-24 h-4 rounded bg-gray-200" />
                 </div>
               ) : !user ? (
-                <Button
-                  as={Link}
-                  href="/auth/login"
-                  className="w-full font-semibold"
-                  style={{
-                    background: "var(--primary)",
-                    color: "#fff",
-                  }}
-                >
-                  Login / Register
-                </Button>
+                <Link href="/auth/login">
+                  <Button
+                    className="w-full font-semibold"
+                    style={{
+                      background: "var(--primary)",
+                      color: "#fff",
+                    }}
+                  >
+                    Login / Register
+                  </Button>
+                </Link>
               ) : (
                 <div>
                   <div className="flex items-center gap-3">
