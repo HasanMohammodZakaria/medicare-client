@@ -35,7 +35,7 @@ const RegistrationPage = () => {
             image: user.image,
             role: user.role,
         });
-        console.log(data);
+        // console.log(data);
 
         if (data) {
             toast.success("Account Created Successfully!");

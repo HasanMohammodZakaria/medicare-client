@@ -36,7 +36,8 @@ const LoginPage = () => {
 
         if (data) {
             toast.success("Login Successfully!");
-            router.push("/");
+            const role = data.user.role
+            router.push(`/dashboard/${role}`);
         }
 
         if (error) {
@@ -48,6 +49,7 @@ const LoginPage = () => {
     const handleGoogleLogin = async () => {
         await authClient.signIn.social({
             provider: "google",
+            callbackURL: "/auth/callback",
         });
     };
 

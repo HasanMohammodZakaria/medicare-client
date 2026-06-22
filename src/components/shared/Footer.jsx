@@ -9,8 +9,14 @@ import { Handset, LogoFacebook } from "@gravity-ui/icons";
 
 import { FaInstagram } from "react-icons/fa";
 import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
+
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "Doctors", href: "/doctors" },

@@ -24,23 +24,6 @@ export default function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
-  const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/");
-        },
-      },
-    });
-  };
-
-  // ======================
-  // USER (IMPORTANT FIX)
-  // null = logged out
-  // object = logged in
-  // ======================
-  //const user = null; // 🔥 এখন Login button দেখাবে
-
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
@@ -51,6 +34,20 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
 
   const navLinks = [
     { label: "Home", href: "/" },
