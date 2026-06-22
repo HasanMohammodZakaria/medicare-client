@@ -154,12 +154,11 @@ function Sidebar({ role }) {
 
 // ─── Top Navbar ────────────────────────────────────────────────────────────
 function DashboardNavbar({ user, role }) {
-    const { theme, setTheme } = useTheme();
+    const { theme, setTheme, resolvedTheme } = useTheme();
     const router = useRouter();
-    const [mounted, setMounted] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    useEffect(() => setMounted(true), []);
+
 
     const handleSignOut = async () => {
         await authClient.signOut();
@@ -200,9 +199,7 @@ function DashboardNavbar({ user, role }) {
                     className="p-2 rounded-xl transition-colors"
                     style={{ color: "var(--text-secondary)", backgroundColor: "var(--surface-secondary)" }}
                 >
-                    {!mounted ? (
-                        <MdDarkMode size={18} />
-                    ) : theme === "dark" ? (
+                    {resolvedTheme === "dark" ? (
                         <MdLightMode size={18} />
                     ) : (
                         <MdDarkMode size={18} />
