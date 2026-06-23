@@ -156,7 +156,7 @@ export default function PatientOverviewClient({
     {
       icon: FaCreditCard,
       label: "Total Paid",
-      value: overview?.totalPaid != null ? `৳${overview.totalPaid}` : "৳0",
+      value: overview?.totalPaid != null ? `$${overview.totalPaid}` : "$0",
       accent: "bg-emerald-500",
       href: "/dashboard/patient/payments",
     },

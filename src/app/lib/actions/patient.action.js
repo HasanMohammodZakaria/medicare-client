@@ -2,6 +2,8 @@
 import { headers } from "next/headers";
 import { auth } from "../auth";
 
+const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
 async function getUserId() {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -10,7 +12,7 @@ async function getUserId() {
     return session.user.id;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
 
 // ── Overview ───────────────────────────────────────────────
 
@@ -31,6 +33,25 @@ export const getPatientAppointments = async () => {
     return res.json();
 }
 
+export const rescheduleAppointment = async (id, data) => {
+    const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/reschedule`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Failed to reschedule");
+    return res.json();
+};
+
+export const cancelAppointment = async (id) => {
+    const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/cancel`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error("Failed to cancel");
+    return res.json();
+};
+
 export const getPatientFavoriteDoctors = async () => {
     const userId = await getUserId();
     const res = await fetch(
@@ -38,4 +59,50 @@ export const getPatientFavoriteDoctors = async () => {
         { cache: "no-store" }
     );
     return res.json();
+};
+
+// GET /api/patient/payments
+
+export const getPatientPayments = async () => {
+    const userId = await getUserId();
+    const res = await fetch(
+        `${BASE_URL}/api/patient/payments?userId=${userId}`,
+        { cache: "no-store" }
+    );
+    if (!res.ok) throw new Error("Failed to fetch payment history");
+    return res.json();
+};
+
+
+// GET /api/patient/reviews?userId=xxx
+
+export const getMyReviews = async () => {
+    const userId = await getUserId();
+    const res = await fetch(
+        `${BASE_URL}/api/patient/reviews?userId=${userId}`,
+        { cache: "no-store" }
+    );
+    if (!res.ok) throw new Error("Failed to fetch reviews");
+    return res.json();
+};
+
+export async function getCompletedAppointments() {
+    try {
+        const session = await auth.api.getSession({ headers: await headers() });
+        if (!session?.user?.id) return [];
+
+        const res = await fetch(
+            `${BASE_URL}/api/patient/appointments/completed?userId=${session.user.id}`,
+            { cache: "no-store" }
+        );
+
+        if (!res.ok) return [];
+        return await res.json();
+    } catch (error) {
+        console.error("getCompletedAppointments error:", error);
+        return [];
+    }
 }
+
+
+
