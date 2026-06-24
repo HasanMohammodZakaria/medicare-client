@@ -48,17 +48,53 @@ export const getDoctorSchedule = async () => {
     return res.json();
 };
 
-// GET /api/doctor/prescriptions
 
-export const getDoctorPrescriptions = async () => {
-    const doctorId = await getDoctorId();
-    const res = await fetch(
-        `${BASE_URL}/api/doctor/prescriptions?doctorId=${doctorId}`,
-        { cache: "no-store" }
-    );
-    if (!res.ok) throw new Error("Failed to fetch prescriptions");
-    return res.json();
-};
+
+
+// GET /api/doctor/prescriptions — সব prescriptions
+export async function getDoctorPrescriptions() {
+    try {
+        const doctorId = await getDoctorId();
+        const res = await fetch(
+            `${BASE_URL}/api/doctor/prescriptions?doctorId=${doctorId}`,
+            { cache: "no-store" }
+        );
+        if (!res.ok) return [];
+        return await res.json();
+    } catch {
+        return [];
+    }
+}
+
+// GET /api/doctor/prescriptions/:appointmentId
+export async function getPrescriptionByAppointment(appointmentId) {
+    try {
+        const res = await fetch(
+            `${BASE_URL}/api/doctor/prescriptions/${appointmentId}`,
+            { cache: "no-store" }
+        );
+        if (!res.ok) return null;
+        return await res.json();
+    } catch {
+        return null;
+    }
+}
+
+// GET /api/doctor/appointments — completed appointments
+export async function getCompletedAppointmentsForPrescription() {
+    try {
+        const doctorId = await getDoctorId();
+        const res = await fetch(
+            `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}&status=completed`,
+            { cache: "no-store" }
+        );
+        if (!res.ok) return [];
+        return await res.json();
+    } catch {
+        return [];
+    }
+}
+
 
 // GET /api/doctor/profile
 export const getDoctorProfile = async () => {
