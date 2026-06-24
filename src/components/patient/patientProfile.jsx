@@ -15,8 +15,8 @@ import {
   MdVerified,
 } from "react-icons/md";
 import { updateProfile } from "@/app/lib/actions/patient.action";
+import ImageUploader from "@/components/shared/ImageUploader";
 
-// ─── Helpers ───────────────────────────────────────────────
 const GENDER_OPTIONS = ["Male", "Female", "Other", "Prefer not to say"];
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -50,7 +50,6 @@ function InfoRow({ icon: Icon, label, value }) {
   );
 }
 
-// ─── Main Component ────────────────────────────────────────
 export default function MyProfile({ initialProfile, userId }) {
   const [profile, setProfile] = useState(initialProfile);
   const [editing, setEditing] = useState(false);
@@ -92,7 +91,7 @@ export default function MyProfile({ initialProfile, userId }) {
 
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
-      {/* ── Header ──────────────────────────────── */}
+      {/* ── Header ── */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -112,7 +111,7 @@ export default function MyProfile({ initialProfile, userId }) {
         </p>
       </motion.div>
 
-      {/* ── Profile Card ─────────────────────────── */}
+      {/* ── Profile Card ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -124,7 +123,6 @@ export default function MyProfile({ initialProfile, userId }) {
           boxShadow: "var(--shadow-md)",
         }}
       >
-        {/* Cover gradient */}
         <div
           className="h-28 w-full"
           style={{
@@ -133,7 +131,6 @@ export default function MyProfile({ initialProfile, userId }) {
           }}
         />
 
-        {/* Avatar + Name */}
         <div className="px-6 pb-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12">
             {/* Avatar */}
@@ -164,7 +161,7 @@ export default function MyProfile({ initialProfile, userId }) {
               )}
             </div>
 
-            {/* Name + Edit button */}
+            {/* Name + buttons */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between flex-1 gap-3 pb-1">
               <div>
                 <div className="flex items-center gap-2">
@@ -196,37 +193,31 @@ export default function MyProfile({ initialProfile, userId }) {
               {!editing ? (
                 <button
                   onClick={() => setEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    color: "#fff",
-                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+                  style={{ backgroundColor: "var(--primary)", color: "#fff" }}
                 >
-                  <MdEdit size={16} />
-                  Edit Profile
+                  <MdEdit size={16} /> Edit Profile
                 </button>
               ) : (
                 <div className="flex gap-2">
                   <button
                     onClick={handleCancel}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold"
                     style={{
                       backgroundColor: "var(--surface-secondary)",
                       color: "var(--text-secondary)",
                       border: "1px solid var(--border)",
                     }}
                   >
-                    <MdClose size={15} />
-                    Cancel
+                    <MdClose size={15} /> Cancel
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
                     style={{ backgroundColor: "var(--primary)" }}
                   >
-                    <MdSave size={15} />
-                    {loading ? "Saving…" : "Save"}
+                    <MdSave size={15} /> {loading ? "Saving…" : "Save"}
                   </button>
                 </div>
               )}
@@ -235,7 +226,7 @@ export default function MyProfile({ initialProfile, userId }) {
         </div>
       </motion.div>
 
-      {/* ── Info + Edit Form ─────────────────────── */}
+      {/* ── Info + Edit Form ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Personal Info */}
         <motion.div
@@ -257,13 +248,12 @@ export default function MyProfile({ initialProfile, userId }) {
           >
             Personal Information
           </h3>
-
           <InfoRow icon={MdPerson} label="Full Name" value={profile.name} />
           <InfoRow icon={MdEmail} label="Email" value={profile.email} />
           <InfoRow icon={MdPhone} label="Phone" value={profile.phone} />
           <InfoRow icon={MdPerson} label="Gender" value={profile.gender} />
 
-          {/* Image URL */}
+          {/* Profile image status */}
           <div className="flex items-center gap-3 pt-3">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
@@ -277,13 +267,13 @@ export default function MyProfile({ initialProfile, userId }) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                Profile Image URL
+                Profile Photo
               </p>
               <p
                 className="text-sm font-medium truncate mt-0.5"
                 style={{ color: "var(--text-primary)" }}
               >
-                {profile.image ? "Image set" : "No image"}
+                {profile.image ? "Photo uploaded" : "No photo"}
               </p>
             </div>
           </div>
@@ -387,33 +377,22 @@ export default function MyProfile({ initialProfile, userId }) {
               </select>
             </div>
 
-            {/* Image URL */}
-            <div>
-              <label
-                className="block text-xs font-medium mb-1.5"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                Profile Image URL
-              </label>
-              <input
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                disabled={!editing}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2.5 rounded-xl text-sm outline-none disabled:opacity-50"
-                style={{
-                  backgroundColor: "var(--surface-secondary)",
-                  border: `1px solid ${editing ? "var(--primary)" : "var(--border)"}`,
-                  color: "var(--text-primary)",
-                }}
+            <div style={{ pointerEvents: editing ? "auto" : "none" }}>
+              <ImageUploader
+                onUpload={(url) =>
+                  setFormData((prev) => ({ ...prev, image: url }))
+                }
+                shape="circle"
+                defaultImage={formData.image}
+                label="Profile Photo"
+                size="md"
               />
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* ── Account Info ─────────────────────────── */}
+      {/* ── Account Info ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,7 +1,14 @@
-import React from "react";
+import {
+  getAdminOverview,
+  getAdminAnalytics,
+} from "@/app/lib/actions/admin.action";
+import AdminOverview from "@/components/admin/AdminOverview";
 
-const AdminDashboardHomePage = () => {
-  return <div>Admin Dashboard Home Page</div>;
-};
+export default async function AdminOverviewPage() {
+  const [overview, analytics] = await Promise.all([
+    getAdminOverview(),
+    getAdminAnalytics(),
+  ]);
 
-export default AdminDashboardHomePage;
+  return <AdminOverview overview={overview} analytics={analytics} />;
+}

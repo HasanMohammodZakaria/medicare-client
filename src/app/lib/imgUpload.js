@@ -1,31 +1,26 @@
-// src/app/lib/utils/imageUpload.js
-// ImgBB Image Upload — সব জায়গায় এই function ব্যবহার করো
 
-// ── Single Image Upload ────────────────────────────────────────────
-// কাজ: একটা image file নিয়ে ImgBB তে upload করে URL return করে
-// use: profile photo, doctor photo, যেকোনো single image
 export const imageUpload = async (image) => {
     if (!image) throw new Error("No image provided");
 
-    // File size check — 32MB limit (ImgBB max)
-    if (image.size > 32 * 1024 * 1024) {
+
+    if (image.size > 2 * 1024 * 1024) {
         throw new Error("Image size must be less than 32MB");
     }
 
     // File type check
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
-    if (!allowedTypes.includes(image.type)) {
+    if (!allowedTypes.includes(image.type.toLowerCase())) {
         throw new Error("Only JPG, PNG, WEBP, GIF images are allowed");
     }
 
     const formData = new FormData();
-    formData.append("image", image); // ✅ fix: formData append করা হয়েছে
+    formData.append("image", image);
 
     const res = await fetch(
         `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_KEY}`,
         {
             method: "POST",
-            body: formData, // ✅ fix: image না, formData পাঠাতে হয়
+            body: formData,
         }
     );
 
@@ -39,7 +34,7 @@ export const imageUpload = async (image) => {
         throw new Error(data.error?.message || "Image upload failed");
     }
 
-    // Return করছে full data object
+
     return {
         url: data.data.url,           // direct image URL
         displayUrl: data.data.display_url, // display URL
@@ -50,9 +45,6 @@ export const imageUpload = async (image) => {
     };
 };
 
-// ── Multiple Images Upload ─────────────────────────────────────────
-// কাজ: একসাথে অনেকগুলো image upload করে URLs array return করে
-// use: prescription এ multiple attachments, gallery etc.
 export const multipleImageUpload = async (images) => {
     if (!images || images.length === 0) throw new Error("No images provided");
     if (images.length > 10) throw new Error("Maximum 10 images at once");
@@ -78,17 +70,13 @@ export const multipleImageUpload = async (images) => {
     return { successful, failed };
 };
 
-// ── Image Upload with Preview ──────────────────────────────────────
-// কাজ: Upload করার আগে local preview URL দেয়, upload শেষে real URL দেয়
-// use: form এ image select করলে preview দেখানো
+//
 export const getImagePreview = (file) => {
     if (!file) return null;
     return URL.createObjectURL(file);
 };
 
-// ── Cleanup Preview URL ────────────────────────────────────────────
-// কাজ: Memory leak এড়াতে preview URL cleanup করো
-// use: component unmount এ বা upload শেষে
+
 export const revokeImagePreview = (previewUrl) => {
     if (previewUrl?.startsWith("blob:")) {
         URL.revokeObjectURL(previewUrl);

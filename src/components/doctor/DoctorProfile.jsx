@@ -1,7 +1,6 @@
 "use client";
-// app/dashboard/doctor/profile/_components/DoctorProfileClient.jsx
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient } from "@/app/lib/auth-client";
 import { updateDoctorProfile } from "@/app/lib/api/doctor.api";
@@ -18,11 +17,13 @@ import {
   MdPerson,
   MdEmail,
   MdSchool,
+  MdKeyboardArrowDown,
+  MdCheck,
 } from "react-icons/md";
 import Stethoscope from "@gravity-ui/icons/Stethoscope";
 import Person from "@gravity-ui/icons/Person";
 import CircleDollar from "@gravity-ui/icons/CircleDollar";
-import ImageUploader from "../shared/ImageUploader";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 const SPECIALIZATIONS = [
   "Cardiology",
@@ -46,6 +47,133 @@ const SPECIALIZATIONS = [
   "General Physician",
 ];
 
+/* ── Custom Dropdown (browser-native select dark mode fix) ── */
+function CustomSelect({ value, onChange, options, placeholder = "Select..." }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // outside click এ close
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ position: "relative", zIndex: open ? 1000 : "auto" }}
+    >
+      {/* Trigger button */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%",
+          padding: "10px 36px 10px 14px",
+          borderRadius: "10px",
+          border: `1px solid ${open ? "var(--primary)" : "var(--border)"}`,
+          background: "var(--bg-muted)",
+          color: value ? "var(--text-primary)" : "var(--text-muted)",
+          fontSize: 14,
+          textAlign: "left",
+          cursor: "pointer",
+          fontFamily: "inherit",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          outline: "none",
+          transition: "border-color 0.15s",
+        }}
+      >
+        <span>{value || placeholder}</span>
+        <MdKeyboardArrowDown
+          size={18}
+          style={{
+            color: "var(--text-muted)",
+            transition: "transform 0.2s",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            flexShrink: 0,
+          }}
+        />
+      </button>
+
+      {/* Dropdown list */}
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            transition={{ duration: 0.15 }}
+            style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              left: 0,
+              right: 0,
+              zIndex: 999,
+              background: "var(--bg-muted)", // ✅ bg-card থেকে bg-muted — একটু lighter
+              border: "1px solid var(--border)",
+              borderRadius: "12px",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+              maxHeight: 240,
+              overflowY: "auto",
+              margin: 0,
+              padding: "6px",
+              listStyle: "none",
+              transformOrigin: "top",
+            }}
+          >
+            {options.map((opt) => {
+              const selected = opt === value;
+              return (
+                <li
+                  key={opt}
+                  onClick={() => {
+                    onChange(opt);
+                    setOpen(false);
+                  }}
+                  style={{
+                    padding: "9px 12px",
+                    borderRadius: "8px",
+                    fontSize: 14,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: selected
+                      ? "var(--primary-subtle)"
+                      : "transparent",
+                    color: selected ? "var(--primary)" : "var(--text-primary)",
+                    fontWeight: selected ? 600 : 400,
+                    transition: "background 0.12s",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!selected)
+                      e.currentTarget.style.background = "var(--bg-card)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!selected)
+                      e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  {opt}
+                  {selected && (
+                    <MdCheck size={15} style={{ color: "var(--primary)" }} />
+                  )}
+                </li>
+              );
+            })}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ── Section wrapper ── */
 function Section({
   title,
   icon,
@@ -62,7 +190,7 @@ function Section({
         background: "var(--bg-card)",
         border: "1px solid var(--border)",
         borderRadius: "16px",
-        overflow: "hidden",
+        overflow: "visible", // ✅ dropdown যেন clip না হয়
       }}
     >
       <div
@@ -106,6 +234,7 @@ function Section({
   );
 }
 
+/* ── Field row ── */
 function FieldRow({ label, value, editing, children }) {
   return (
     <div style={{ marginBottom: 16 }}>
@@ -157,7 +286,10 @@ const inputStyle = {
   fontFamily: "inherit",
 };
 
-export default function DoctorProfileClient({ initialProfile = {} }) {
+/* ══════════════════════════════════════════════════════════
+   Main Component
+══════════════════════════════════════════════════════════ */
+export default function DoctorProfile({ initialProfile = {} }) {
   const { data: session } = authClient.useSession();
   const doctorId = session?.user?.id;
   const userEmail = session?.user?.email ?? "";
@@ -184,7 +316,6 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
     if (!doctorId) return toast.error("Session expired");
     if (!form.doctorName.trim()) return toast.error("Name is required");
     if (!form.specialization) return toast.error("Specialization is required");
-
     setLoading(true);
     try {
       await updateDoctorProfile(doctorId, form);
@@ -336,7 +467,6 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
           flexWrap: "wrap",
         }}
       >
-        {/* Avatar */}
         <div style={{ position: "relative", flexShrink: 0 }}>
           <div
             style={{
@@ -384,7 +514,6 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
           )}
         </div>
 
-        {/* Info */}
         <div style={{ flex: 1, minWidth: 200 }}>
           <div
             style={{
@@ -421,7 +550,6 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
               {isVerified ? "✓ Verified" : "⏳ Pending Verification"}
             </span>
           </div>
-
           <p
             style={{
               margin: "0 0 12px",
@@ -432,7 +560,6 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
           >
             {form.specialization || "Specialization not set"}
           </p>
-
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px" }}>
             {[
               {
@@ -470,8 +597,7 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
         </div>
       </motion.div>
 
-      {/* ── Profile Image URL (edit mode only) ── */}
-
+      {/* ── Profile Image Uploader (edit mode only) ── */}
       <AnimatePresence>
         {editing && (
           <motion.div
@@ -560,27 +686,15 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
             value={form.specialization}
             editing={editing}
           >
-            <select
+            {/* ✅ Custom dropdown — dark mode এ সঠিক color দেখাবে */}
+            <CustomSelect
               value={form.specialization}
-              onChange={(e) => set("specialization", e.target.value)}
-              style={{
-                ...inputStyle,
-                appearance: "none",
-                cursor: "pointer",
-                paddingRight: 36,
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 12px center",
-              }}
-            >
-              <option value="">Select specialization</option>
-              {SPECIALIZATIONS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => set("specialization", val)}
+              options={SPECIALIZATIONS}
+              placeholder="Select specialization"
+            />
           </FieldRow>
+
           <FieldRow
             label="Experience (years)"
             value={form.experience ? `${form.experience} years` : ""}
@@ -598,6 +712,7 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
               onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
             />
           </FieldRow>
+
           <FieldRow
             label="Hospital / Clinic"
             value={form.hospitalName}
