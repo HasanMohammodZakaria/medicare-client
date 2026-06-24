@@ -22,6 +22,7 @@ import {
 import Stethoscope from "@gravity-ui/icons/Stethoscope";
 import Person from "@gravity-ui/icons/Person";
 import CircleDollar from "@gravity-ui/icons/CircleDollar";
+import ImageUploader from "../shared/ImageUploader";
 
 const SPECIALIZATIONS = [
   "Cardiology",
@@ -156,9 +157,7 @@ const inputStyle = {
   fontFamily: "inherit",
 };
 
-// ── Main Component — user prop নেই, session থেকে নেওয়া হচ্ছে ──
 export default function DoctorProfileClient({ initialProfile = {} }) {
-  // ✅ session থেকে user info নেওয়া হচ্ছে
   const { data: session } = authClient.useSession();
   const doctorId = session?.user?.id;
   const userEmail = session?.user?.email ?? "";
@@ -472,6 +471,7 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
       </motion.div>
 
       {/* ── Profile Image URL (edit mode only) ── */}
+
       <AnimatePresence>
         {editing && (
           <motion.div
@@ -487,27 +487,12 @@ export default function DoctorProfileClient({ initialProfile = {} }) {
               overflow: "hidden",
             }}
           >
-            <label
-              style={{
-                display: "block",
-                fontSize: 12,
-                fontWeight: 700,
-                color: "var(--text-muted)",
-                marginBottom: 6,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
-              Profile Image URL
-            </label>
-            <input
-              type="url"
-              placeholder="https://example.com/photo.jpg"
-              value={form.profileImage}
-              onChange={(e) => set("profileImage", e.target.value)}
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "var(--primary)")}
-              onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
+            <ImageUploader
+              onUpload={(url) => set("profileImage", url)}
+              shape="circle"
+              defaultImage={form.profileImage}
+              label="Profile Photo"
+              size="lg"
             />
           </motion.div>
         )}

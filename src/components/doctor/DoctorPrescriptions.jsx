@@ -78,9 +78,9 @@ function MedicationRow({ med, index, onChange, onRemove, readonly }) {
         borderColor: "var(--color-base-300)",
       }}
     >
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 flex-0">
         <span
-          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-0"
           style={{
             background: "var(--color-primary)",
             color: "var(--color-primary-content)",
