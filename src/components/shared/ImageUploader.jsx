@@ -1,23 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { MdCloudUpload, MdClose, MdImage } from "react-icons/md";
-
 import { toast } from "react-toastify";
 import {
   getImagePreview,
   imageUpload,
   revokeImagePreview,
 } from "@/app/lib/imgUpload";
-
-// Props:
-// onUpload(url)  — upload শেষে image URL দেবে
-// defaultImage   — existing image URL (edit mode এ)
-// label          — field label
-// size           — "sm" | "md" | "lg" (default: "md")
-// shape          — "circle" | "square" (default: "square")
 
 export default function ImageUploader({
   onUpload,
@@ -31,7 +22,6 @@ export default function ImageUploader({
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef(null);
 
-  // Cleanup blob URL on unmount
   useEffect(() => {
     return () => {
       if (preview?.startsWith("blob:")) revokeImagePreview(preview);
@@ -44,7 +34,25 @@ export default function ImageUploader({
   const handleFile = async (file) => {
     if (!file) return;
 
-    // Show preview immediately
+    // ✅ lowercase এ convert করে check — .JPG .PNG সব কাজ করবে
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
+      toast.error("Only JPG, PNG, WEBP, GIF files are allowed.");
+      return;
+    }
+
+    // ✅ 2MB limit — logic আর message দুটোই ঠিক
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File size must be under 2MB.");
+      return;
+    }
+
     const localPreview = getImagePreview(file);
     setPreview(localPreview);
     setUploading(true);
@@ -76,10 +84,11 @@ export default function ImageUploader({
     if (file) handleFile(file);
   };
 
+  // ✅ Remove — preview clear + parent কে "" দিয়ে জানানো
   const handleRemove = () => {
     if (preview?.startsWith("blob:")) revokeImagePreview(preview);
     setPreview("");
-    onUpload?.("");
+    onUpload?.(""); // parent এ formData.image = "" হবে
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -122,8 +131,10 @@ export default function ImageUploader({
             width: dimensions,
             height: dimensions,
             borderRadius,
-            border: `2px dashed ${dragOver ? "var(--primary)" : preview ? "var(--border)" : "var(--border)"}`,
-            background: dragOver ? "var(--primary-subtle)" : "var(--bg-muted)",
+            border: `2px dashed ${dragOver ? "var(--primary)" : "var(--border)"}`,
+            background: dragOver
+              ? "color-mix(in srgb, var(--primary) 8%, transparent)"
+              : "color-mix(in srgb, var(--text-muted) 5%, transparent)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -143,7 +154,6 @@ export default function ImageUploader({
                 style={{ objectFit: "cover" }}
                 sizes={`${dimensions}px`}
               />
-              {/* Overlay on hover */}
               <div
                 style={{
                   position: "absolute",
@@ -191,7 +201,7 @@ export default function ImageUploader({
         <div style={{ flex: 1, minWidth: 160 }}>
           <p
             style={{
-              margin: "0 0 6px",
+              margin: "0 0 4px",
               fontSize: 13,
               color: "var(--text-secondary)",
               fontWeight: 500,
@@ -203,6 +213,8 @@ export default function ImageUploader({
                 ? "Image uploaded"
                 : "No image selected"}
           </p>
+
+          {/* ✅ lowercase + সঠিক size limit */}
           <p
             style={{
               margin: "0 0 12px",
@@ -210,7 +222,7 @@ export default function ImageUploader({
               color: "var(--text-muted)",
             }}
           >
-            JPG, PNG, WEBP, GIF · Max 32MB
+            jpg, png, webp, gif · Max 2MB
           </p>
 
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -222,21 +234,24 @@ export default function ImageUploader({
                 padding: "7px 14px",
                 borderRadius: "9px",
                 border: "1px solid var(--border)",
-                background: "var(--bg-muted)",
+                background:
+                  "color-mix(in srgb, var(--text-muted) 8%, transparent)",
                 color: "var(--text-secondary)",
                 fontSize: 12,
                 fontWeight: 600,
-                cursor: "pointer",
+                cursor: uploading ? "not-allowed" : "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: 5,
                 opacity: uploading ? 0.5 : 1,
+                transition: "all 0.15s",
               }}
             >
               <MdCloudUpload size={14} />
               {preview ? "Change" : "Choose File"}
             </button>
 
+            {/* ✅ Remove button — --danger-subtle নেই তাই color-mix দিয়ে করা */}
             {preview && (
               <button
                 type="button"
@@ -246,14 +261,17 @@ export default function ImageUploader({
                   padding: "7px 14px",
                   borderRadius: "9px",
                   border: "1px solid var(--danger)",
-                  background: "var(--danger-subtle)",
+                  background:
+                    "color-mix(in srgb, var(--danger) 12%, transparent)",
                   color: "var(--danger)",
                   fontSize: 12,
                   fontWeight: 600,
-                  cursor: "pointer",
+                  cursor: uploading ? "not-allowed" : "pointer",
                   display: "flex",
                   alignItems: "center",
                   gap: 5,
+                  opacity: uploading ? 0.5 : 1,
+                  transition: "all 0.15s",
                 }}
               >
                 <MdClose size={14} /> Remove
@@ -263,7 +281,6 @@ export default function ImageUploader({
         </div>
       </div>
 
-      {/* Hidden input */}
       <input
         ref={inputRef}
         type="file"
@@ -272,7 +289,6 @@ export default function ImageUploader({
         style={{ display: "none" }}
       />
 
-      {/* Spin animation */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );

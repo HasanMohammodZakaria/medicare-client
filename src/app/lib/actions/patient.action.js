@@ -1,6 +1,7 @@
 "use server";
 import { headers } from "next/headers";
 import { auth } from "../auth";
+import { revalidatePath } from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -104,21 +105,21 @@ export async function getCompletedAppointments() {
     }
 }
 
-// export const getPatientProfile = async () => {
-//     const userId = await getUserId();
-//     const res = await fetch(
-//         `${BASE_URL}/api/patient/profile?userId=${userId}`,
-//         { cache: "no-store" }
-//     );
-//     if (!res.ok) throw new Error("Failed to fetch profile");
-//     return res.json();
-// };
-
 export const getPatientProfile = async () => {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) throw new Error("Unauthorized");
-    return session.user; // name, email, image, role, id সব এখানেই আছে
+    const userId = await getUserId();
+    const res = await fetch(
+        `${BASE_URL}/api/patient/profile?userId=${userId}`,
+        { cache: "no-store" }
+    );
+    if (!res.ok) throw new Error("Failed to fetch profile");
+    return res.json();
 };
+
+// export const getPatientProfile = async () => {
+//     const session = await auth.api.getSession({ headers: await headers() });
+//     if (!session?.user) throw new Error("Unauthorized");
+//     return session.user; 
+// };
 
 export const updateProfile = async (data) => {
     const userId = await getUserId();
@@ -128,6 +129,7 @@ export const updateProfile = async (data) => {
         body: JSON.stringify({ userId, ...data }),
     });
     if (!res.ok) throw new Error("Failed to update profile");
+    revalidatePath("/dashboard/patient/profile");
     return res.json();
 };
 

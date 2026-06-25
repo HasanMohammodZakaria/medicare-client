@@ -68,7 +68,7 @@ export default function MyProfile({ initialProfile, userId }) {
   const handleSave = async () => {
     setLoading(true);
     try {
-      await updateProfile(userId, formData);
+      await updateProfile(formData);
       setProfile((prev) => ({ ...prev, ...formData }));
       toast.success("Profile updated successfully!");
       setEditing(false);
