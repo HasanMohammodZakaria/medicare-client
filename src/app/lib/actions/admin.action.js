@@ -37,6 +37,40 @@ export async function getAdminUsers() {
     }
 }
 
+
+
+export async function getDoctors() {
+    const res = await fetch(`${BASE_URL}/api/admin/doctors`, {
+        cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Failed to fetch doctors");
+    return res.json();
+}
+
+export async function verifyDoctor(id) {
+    const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/verify`, {
+        method: "PATCH",
+    });
+    if (!res.ok) throw new Error("Failed to verify doctor");
+    return res.json();
+}
+
+export async function rejectDoctor(id) {
+    const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/reject`, {
+        method: "PATCH",
+    });
+    if (!res.ok) throw new Error("Failed to reject doctor");
+    return res.json();
+}
+
+export async function revokeDoctor(id) {
+    const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/revoke`, {
+        method: "PATCH",
+    });
+    if (!res.ok) throw new Error("Failed to revoke doctor");
+    return res.json();
+}
+
 // Chart data
 
 export const getAdminAnalytics = async () => {
