@@ -86,6 +86,16 @@ export const getAdminAppointments = async (status = "all") => {
 };
 
 
+// GET /api/admin/payments
+
+export const getAdminPayments = async () => {
+    const res = await fetch(`${BASE_URL}/api/admin/payments`, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch payments");
+    return res.json();
+};
+
+
+
 // Chart data
 
 export const getAdminAnalytics = async () => {
