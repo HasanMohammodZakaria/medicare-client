@@ -38,6 +38,7 @@ export async function getAdminUsers() {
 }
 
 
+// GET /api/admin/doctors
 
 export async function getDoctors() {
     const res = await fetch(`${BASE_URL}/api/admin/doctors`, {
@@ -70,6 +71,20 @@ export async function revokeDoctor(id) {
     if (!res.ok) throw new Error("Failed to revoke doctor");
     return res.json();
 }
+
+
+// GET /api/admin/appointments
+
+export const getAdminAppointments = async (status = "all") => {
+    const url = status === "all"
+        ? `${BASE_URL}/api/admin/appointments`
+        : `${BASE_URL}/api/admin/appointments?status=${status}`;
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch appointments");
+    return res.json();
+};
+
 
 // Chart data
 
