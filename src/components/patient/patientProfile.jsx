@@ -16,6 +16,7 @@ import {
 } from "react-icons/md";
 import { updateProfile } from "@/app/lib/actions/patient.action";
 import ImageUploader from "@/components/shared/ImageUploader";
+import { useRouter } from "next/navigation";
 
 const GENDER_OPTIONS = ["Male", "Female", "Other", "Prefer not to say"];
 
@@ -51,6 +52,7 @@ function InfoRow({ icon: Icon, label, value }) {
 }
 
 export default function MyProfile({ initialProfile, userId }) {
+  const router = useRouter();
   const [profile, setProfile] = useState(initialProfile);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -72,6 +74,7 @@ export default function MyProfile({ initialProfile, userId }) {
       setProfile((prev) => ({ ...prev, ...formData }));
       toast.success("Profile updated successfully!");
       setEditing(false);
+      router.refresh();
     } catch {
       toast.error("Failed to update profile. Try again.");
     } finally {

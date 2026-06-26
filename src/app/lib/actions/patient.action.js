@@ -130,6 +130,8 @@ export const updateProfile = async (data) => {
     });
     if (!res.ok) throw new Error("Failed to update profile");
     revalidatePath("/dashboard/patient/profile");
+    revalidatePath("/dashboard/patient", "layout");
+    revalidatePath("/", "layout");
     return res.json();
 };
 

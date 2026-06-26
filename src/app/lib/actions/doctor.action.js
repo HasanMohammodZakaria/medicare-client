@@ -3,6 +3,7 @@
 
 import { auth } from "../auth";
 import { headers } from "next/headers";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -51,7 +52,7 @@ export const getDoctorSchedule = async () => {
 
 
 
-// GET /api/doctor/prescriptions — সব prescriptions
+// GET /api/doctor/prescriptions 
 export async function getDoctorPrescriptions() {
     try {
         const doctorId = await getDoctorId();
@@ -97,12 +98,41 @@ export async function getCompletedAppointmentsForPrescription() {
 
 
 // GET /api/doctor/profile
+// export const getDoctorProfile = async () => {
+//     const doctorId = await getDoctorId();
+//     const res = await fetch(
+//         `${BASE_URL}/api/doctor/profile?doctorId=${doctorId}`,
+//         { cache: "no-store" }
+//     );
+//     if (!res.ok) throw new Error("Failed to fetch doctor profile");
+//     return res.json();
+// };
+
+
 export const getDoctorProfile = async () => {
     const doctorId = await getDoctorId();
     const res = await fetch(
         `${BASE_URL}/api/doctor/profile?doctorId=${doctorId}`,
-        { cache: "no-store" }
+        { next: { tags: ["doctor-profile"] } }
     );
     if (!res.ok) throw new Error("Failed to fetch doctor profile");
+    return res.json();
+};
+
+
+
+// PATCH /api/doctor/profile
+export const updateDoctorProfile = async (data) => {
+    const doctorId = await getDoctorId();
+    const res = await fetch(`${BASE_URL}/api/doctor/profile`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ doctorId, ...data }),
+    });
+    if (!res.ok) throw new Error("Failed to update doctor profile");
+    revalidateTag("doctor-profile");
+    revalidatePath("/dashboard/doctor/profile");
+    revalidatePath("/dashboard/doctor", "layout");
+    revalidatePath("/", "layout");
     return res.json();
 };
