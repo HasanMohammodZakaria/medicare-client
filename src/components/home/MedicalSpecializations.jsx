@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { FaHeartbeat, FaBrain, FaBone, FaArrowRight } from "react-icons/fa";
-import { MdChildCare } from "react-icons/md";
+import { MdArrowForward, MdChildCare } from "react-icons/md";
+import { motion } from "framer-motion";
 
 const specializations = [
   {
@@ -42,7 +43,7 @@ const specializations = [
 export default function MedicalSpecializations() {
   return (
     <section className="py-20 bg-base">
-      <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 lg:px-8 ">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
           <span
@@ -65,7 +66,7 @@ export default function MedicalSpecializations() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
           {specializations.map((item) => {
             const Icon = item.icon;
 
@@ -118,18 +119,41 @@ export default function MedicalSpecializations() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="flex justify-center mt-14">
-          <Link
-            href="/find-doctors"
-            className="inline-flex items-center gap-3 bg-primary text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
-            style={{
-              boxShadow: "var(--shadow-md)",
-            }}
-          >
-            View All Doctors
-            <FaArrowRight />
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          style={{ textAlign: "center" }}
+        >
+          <Link href="/doctors" style={{ textDecoration: "none" }}>
+            <button
+              style={{
+                padding: "12px 32px",
+                borderRadius: "var(--radius-sm)",
+                background: "transparent",
+                color: "var(--primary)",
+                border: "2px solid var(--primary)",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--primary)";
+                e.currentTarget.style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--primary)";
+              }}
+            >
+              View All Doctors <MdArrowForward size={16} />
+            </button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

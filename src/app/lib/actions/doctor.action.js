@@ -13,13 +13,24 @@ async function getDoctorId() {
     return session.user.id;
 }
 
+const getAuthHeaders = async () => {
+    const tokenRes = await auth.api.getToken({ headers: await headers() });
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${tokenRes?.token}`,
+    };
+};
+
 // GET /api/doctor/overview
 
 export const getDoctorOverview = async () => {
     const doctorId = await getDoctorId();
     const res = await fetch(
         `${BASE_URL}/api/doctor/overview?doctorId=${doctorId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     if (!res.ok) throw new Error("Failed to fetch overview");
     return res.json();
@@ -32,7 +43,7 @@ export const getDoctorAppointments = async (status = "all") => {
     const url = status === "all"
         ? `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}`
         : `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}&status=${status}`;
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store", headers: await getAuthHeaders(), });
     if (!res.ok) throw new Error("Failed to fetch appointments");
     return res.json();
 };
@@ -43,7 +54,7 @@ export const getDoctorSchedule = async () => {
     const doctorId = await getDoctorId();
     const res = await fetch(
         `${BASE_URL}/api/doctor/schedule?doctorId=${doctorId}`,
-        { cache: "no-store" }
+        { cache: "no-store", headers: await getAuthHeaders(), }
     );
     if (!res.ok) throw new Error("Failed to fetch schedule");
     return res.json();
@@ -58,7 +69,7 @@ export async function getDoctorPrescriptions() {
         const doctorId = await getDoctorId();
         const res = await fetch(
             `${BASE_URL}/api/doctor/prescriptions?doctorId=${doctorId}`,
-            { cache: "no-store" }
+            { cache: "no-store", headers: await getAuthHeaders(), }
         );
         if (!res.ok) return [];
         return await res.json();
@@ -72,7 +83,7 @@ export async function getPrescriptionByAppointment(appointmentId) {
     try {
         const res = await fetch(
             `${BASE_URL}/api/doctor/prescriptions/${appointmentId}`,
-            { cache: "no-store" }
+            { cache: "no-store", headers: await getAuthHeaders(), }
         );
         if (!res.ok) return null;
         return await res.json();
@@ -87,7 +98,7 @@ export async function getCompletedAppointmentsForPrescription() {
         const doctorId = await getDoctorId();
         const res = await fetch(
             `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}&status=completed`,
-            { cache: "no-store" }
+            { cache: "no-store", headers: await getAuthHeaders(), }
         );
         if (!res.ok) return [];
         return await res.json();
@@ -113,7 +124,7 @@ export const getDoctorProfile = async () => {
     const doctorId = await getDoctorId();
     const res = await fetch(
         `${BASE_URL}/api/doctor/profile?doctorId=${doctorId}`,
-        { next: { tags: ["doctor-profile"] } }
+        { next: { tags: ["doctor-profile"] }, headers: await getAuthHeaders() }
     );
     if (!res.ok) throw new Error("Failed to fetch doctor profile");
     return res.json();
@@ -126,7 +137,7 @@ export const updateDoctorProfile = async (data) => {
     const doctorId = await getDoctorId();
     const res = await fetch(`${BASE_URL}/api/doctor/profile`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ doctorId, ...data }),
     });
     if (!res.ok) throw new Error("Failed to update doctor profile");

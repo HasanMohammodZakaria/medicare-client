@@ -14,7 +14,6 @@ export async function getUserId() {
 }
 
 const getAuthHeaders = async () => {
-    const session = await auth.api.getSession({ headers: await headers() });
     const tokenRes = await auth.api.getToken({ headers: await headers() });
     return {
         "Content-Type": "application/json",
@@ -40,35 +39,42 @@ export const getPatientAppointments = async () => {
     const userId = await getUserId();
     const res = await fetch(
         `${BASE_URL}/api/patient/appointments?userId=${userId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     return res.json();
 }
 
-export const rescheduleAppointment = async (id, data) => {
-    const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/reschedule`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to reschedule");
-    return res.json();
-};
+// export const rescheduleAppointment = async (id, data) => {
+//     const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/reschedule`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(data),
+//     });
+//     if (!res.ok) throw new Error("Failed to reschedule");
+//     return res.json();
+// };
 
-export const cancelAppointment = async (id) => {
-    const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/cancel`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) throw new Error("Failed to cancel");
-    return res.json();
-};
+// export const cancelAppointment = async (id) => {
+//     const res = await fetch(`${BASE_URL}/api/patient/appointments/${id}/cancel`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//     });
+//     if (!res.ok) throw new Error("Failed to cancel");
+//     return res.json();
+// };
 
 export const getPatientFavoriteDoctors = async () => {
     const userId = await getUserId();
     const res = await fetch(
         `${BASE_URL}/api/patient/favorite-doctors?userId=${userId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+
+        }
     );
     return res.json();
 };
@@ -79,7 +85,10 @@ export const getPatientPayments = async () => {
     const userId = await getUserId();
     const res = await fetch(
         `${BASE_URL}/api/patient/payments?userId=${userId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     if (!res.ok) throw new Error("Failed to fetch payment history");
     return res.json();
@@ -92,7 +101,10 @@ export const getMyReviews = async () => {
     const userId = await getUserId();
     const res = await fetch(
         `${BASE_URL}/api/patient/reviews?userId=${userId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     if (!res.ok) throw new Error("Failed to fetch reviews");
     return res.json();
@@ -105,7 +117,10 @@ export async function getCompletedAppointments() {
 
         const res = await fetch(
             `${BASE_URL}/api/patient/appointments/completed?userId=${session.user.id}`,
-            { cache: "no-store" }
+            {
+                cache: "no-store",
+                headers: await getAuthHeaders(),
+            }
         );
 
         if (!res.ok) return [];
@@ -120,7 +135,10 @@ export const getPatientProfile = async () => {
     const userId = await getUserId();
     const res = await fetch(
         `${BASE_URL}/api/patient/profile?userId=${userId}`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     if (!res.ok) throw new Error("Failed to fetch profile");
     return res.json();
@@ -136,7 +154,7 @@ export const updateProfile = async (data) => {
     const userId = await getUserId();
     const res = await fetch(`${BASE_URL}/api/patient/profile`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ userId, ...data }),
     });
     if (!res.ok) throw new Error("Failed to update profile");

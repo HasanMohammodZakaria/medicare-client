@@ -1,12 +1,25 @@
+import { authClient } from "../auth-client";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
+// ── client-side auth header ──
+const getClientAuthHeaders = async () => {
+    const { data } = await authClient.getToken();
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${data?.token}`,
+    };
+}
+
+
+// ── reschedule function 
 
 export const rescheduleAppointment = async (id, data) => {
     const res = await fetch(
         `${BASE_URL}/api/patient/appointments/${id}/reschedule`,
         {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: await getClientAuthHeaders(),
             body: JSON.stringify(data),
         }
     );
@@ -19,7 +32,7 @@ export const cancelAppointment = async (id) => {
         `${BASE_URL}/api/patient/appointments/${id}/cancel`,
         {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: await getClientAuthHeaders(),
         }
     );
     if (!res.ok) throw new Error("Failed to cancel appointment");
@@ -31,7 +44,7 @@ export const cancelAppointment = async (id) => {
 export const addReview = async ({ patientId, doctorId, rating, reviewText }) => {
     const res = await fetch(`${BASE_URL}/api/patient/reviews`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await getClientAuthHeaders(),
         body: JSON.stringify({ patientId, doctorId, rating, reviewText }),
     });
     if (!res.ok) throw new Error("Failed to add review");
@@ -43,7 +56,7 @@ export const addReview = async ({ patientId, doctorId, rating, reviewText }) => 
 export const updateReview = async (id, { rating, reviewText }) => {
     const res = await fetch(`${BASE_URL}/api/patient/reviews/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: await getClientAuthHeaders(),
         body: JSON.stringify({ rating, reviewText }),
     });
     if (!res.ok) throw new Error("Failed to update review");
@@ -55,6 +68,7 @@ export const updateReview = async (id, { rating, reviewText }) => {
 export const deleteReview = async (id) => {
     const res = await fetch(`${BASE_URL}/api/patient/reviews/${id}`, {
         method: "DELETE",
+        headers: await getClientAuthHeaders(),
     });
     if (!res.ok) throw new Error("Failed to delete review");
     return res.json();

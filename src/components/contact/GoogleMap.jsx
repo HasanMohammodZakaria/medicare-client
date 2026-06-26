@@ -17,7 +17,7 @@ export default function GoogleMap() {
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
-            className="w-full h-[350px] md:h-[450px] lg:h-[550px] border-0"
+            className="w-full h-87.5 md:h-112.5 lg:h-137.5 border-0"
             title="MediCare Connect Location"
           />
         </div>

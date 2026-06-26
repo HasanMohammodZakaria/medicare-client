@@ -10,19 +10,16 @@ import {
   MdArrowForward,
 } from "react-icons/md";
 
+const CARD_COLORS = [
+  "var(--doctor-card)",
+  "var(--appointment-card)",
+  "var(--patient-card)",
+  "var(--review-card)",
+];
+
 function DoctorCard({ doctor, index }) {
-  const SPEC_COLORS = {
-    Cardiology: "var(--doctor-card)",
-    Neurology: "var(--appointment-card)",
-    Orthopedics: "var(--warning)",
-    Pediatrics: "var(--patient-card)",
-    Dermatology: "var(--review-card)",
-    Gynecology: "var(--danger)",
-    Oncology: "var(--info)",
-    Psychiatry: "var(--secondary)",
-    "General Physician": "var(--payment-card)",
-  };
-  const color = SPEC_COLORS[doctor.specialization] ?? "var(--primary)";
+  const image = doctor.profileImage || doctor.userImage;
+  const accentColor = CARD_COLORS[index % CARD_COLORS.length];
 
   return (
     <motion.div
@@ -36,18 +33,32 @@ function DoctorCard({ doctor, index }) {
         border: "1px solid var(--border)",
         borderRadius: "var(--radius-md)",
         overflow: "hidden",
-        transition: "box-shadow 0.25s",
         cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        transition:
+          "box-shadow var(--transition-base), border-color var(--transition-base)",
       }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.boxShadow = "var(--shadow-md)")
-      }
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "var(--shadow-md)";
+        e.currentTarget.style.borderColor = accentColor;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = "var(--border)";
+      }}
     >
-      {/* Top accent */}
-      <div style={{ height: 4, background: color }} />
+      {/* ✅ Top accent — card এর unique color */}
+      <div style={{ height: 5, background: accentColor }} />
 
-      <div style={{ padding: "20px" }}>
+      <div
+        style={{
+          padding: "20px",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {/* Avatar + name */}
         <div
           style={{
@@ -63,7 +74,7 @@ function DoctorCard({ doctor, index }) {
               height: 64,
               borderRadius: "50%",
               overflow: "hidden",
-              border: `2px solid ${color}`,
+              border: `2px solid ${accentColor}`,
               flexShrink: 0,
               background: "var(--surface-secondary)",
               display: "flex",
@@ -71,41 +82,49 @@ function DoctorCard({ doctor, index }) {
               justifyContent: "center",
             }}
           >
-            {doctor.profileImage ? (
+            {image ? (
               <Image
-                src={doctor.profileImage}
-                alt={doctor.doctorName}
+                src={image}
+                alt={doctor.doctorName || "Doctor"}
                 width={64}
                 height={64}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
             ) : (
-              <span style={{ fontSize: 24, fontWeight: 700, color }}>
+              <span
+                style={{ fontSize: 24, fontWeight: 700, color: accentColor }}
+              >
                 {doctor.doctorName?.[0] ?? "D"}
               </span>
             )}
           </div>
-          <div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
             <h3
               style={{
                 margin: 0,
                 fontSize: 15,
                 fontWeight: 700,
                 color: "var(--text-primary)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {doctor.doctorName}
             </h3>
+            {/* ✅ Badge — card accent color */}
             <span
               style={{
                 display: "inline-block",
                 marginTop: 4,
-                padding: "2px 10px",
+                padding: "3px 10px",
                 borderRadius: 20,
                 fontSize: 11,
                 fontWeight: 600,
-                background: color + "22",
-                color,
+                background: accentColor + "22",
+                color: accentColor,
+                border: `1px solid ${accentColor}44`,
               }}
             >
               {doctor.specialization}
@@ -113,26 +132,27 @@ function DoctorCard({ doctor, index }) {
           </div>
         </div>
 
-        {/* Info chips */}
+        {/* ✅ Info rows — icon color muted, text secondary */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 6,
+            gap: 7,
             marginBottom: 16,
+            flex: 1,
           }}
         >
           {[
             {
-              icon: <MdWork size={14} />,
+              icon: <MdWork size={13} />,
               text: `${doctor.experience ?? 0} years experience`,
             },
             {
-              icon: <MdLocalHospital size={14} />,
+              icon: <MdLocalHospital size={13} />,
               text: doctor.hospitalName || "—",
             },
             {
-              icon: <MdAttachMoney size={14} />,
+              icon: <MdAttachMoney size={13} />,
               text: `$${doctor.consultationFee ?? 0} / consultation`,
             },
           ].map((item, i) => (
@@ -140,23 +160,63 @@ function DoctorCard({ doctor, index }) {
               key={i}
               style={{ display: "flex", alignItems: "center", gap: 8 }}
             >
-              <span style={{ color: "var(--text-muted)" }}>{item.icon}</span>
-              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+              {/* ✅ icon color — text-muted, card color না */}
+              <span style={{ color: "var(--text-muted)", flexShrink: 0 }}>
+                {item.icon}
+              </span>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: "var(--text-secondary)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {item.text}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Book Now button */}
-        <Link href={`/doctors/${doctor.userId}`}>
+        {/* Rating */}
+        {(doctor.avgRating > 0 || doctor.totalReviews > 0) && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              marginBottom: 14,
+            }}
+          >
+            <MdStar size={14} style={{ color: "var(--warning)" }} />
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: "var(--text-primary)",
+              }}
+            >
+              {doctor.avgRating ?? 0}
+            </span>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+              ({doctor.totalReviews ?? 0} reviews)
+            </span>
+          </div>
+        )}
+
+        {/* ✅ View Profile button — primary color, card color না */}
+        <Link
+          href={`/doctors/${doctor._id}`}
+          style={{ textDecoration: "none" }}
+        >
           <button
             style={{
               width: "100%",
               padding: "10px",
               borderRadius: "var(--radius-sm)",
-              background: color,
-              color: "#fff",
+              background: "var(--primary)", // ← primary, card color না
+              color: "var(--background)",
               border: "none",
               fontSize: 13,
               fontWeight: 700,
@@ -165,10 +225,14 @@ function DoctorCard({ doctor, index }) {
               alignItems: "center",
               justifyContent: "center",
               gap: 6,
-              transition: "opacity 0.15s",
+              transition: "background var(--transition-fast)",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "var(--primary-hover)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "var(--primary)")
+            }
           >
             View Profile <MdArrowForward size={15} />
           </button>
@@ -182,7 +246,7 @@ export default function FeaturedDoctors({ doctors = [] }) {
   return (
     <section style={{ padding: "64px 20px", background: "var(--background)" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* Section header */}
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -195,13 +259,15 @@ export default function FeaturedDoctors({ doctors = [] }) {
               display: "inline-block",
               padding: "6px 18px",
               borderRadius: 20,
-              background: "var(--primary)22",
+              background: "color-mix(in srgb, var(--primary) 12%, transparent)",
               color: "var(--primary)",
               fontSize: 12,
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: 12,
+              border:
+                "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
             }}
           >
             Our Specialists
@@ -231,7 +297,7 @@ export default function FeaturedDoctors({ doctors = [] }) {
           </p>
         </motion.div>
 
-        {/* Doctor Cards grid */}
+        {/* Cards Grid */}
         <div
           style={{
             display: "grid",
@@ -257,36 +323,36 @@ export default function FeaturedDoctors({ doctors = [] }) {
           )}
         </div>
 
-        {/* View All button */}
+        {/* ✅ View All — secondary style, card color না, primary color না */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           style={{ textAlign: "center" }}
         >
-          <Link href="/doctors">
+          <Link href="/doctors" style={{ textDecoration: "none" }}>
             <button
               style={{
                 padding: "12px 32px",
                 borderRadius: "var(--radius-sm)",
                 background: "transparent",
-                color: "var(--primary)",
-                border: "2px solid var(--primary)",
+                color: "var(--secondary)",
+                border: "2px solid var(--secondary)",
                 fontSize: 14,
                 fontWeight: 700,
                 cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                transition: "all 0.2s",
+                transition: "all var(--transition-base)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "var(--primary)";
-                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.background = "var(--secondary)";
+                e.currentTarget.style.color = "var(--background)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--primary)";
+                e.currentTarget.style.color = "var(--secondary)";
               }}
             >
               View All Doctors <MdArrowForward size={16} />

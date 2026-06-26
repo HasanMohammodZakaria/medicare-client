@@ -2,12 +2,21 @@
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
+// ── client-side auth header ──
+const getClientAuthHeaders = async () => {
+    const { data } = await authClient.getToken();
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${data?.token}`,
+    };
+}
+
 // PATCH /api/doctor/schedule
 
 export const updateDoctorSchedule = async (doctorId, { availableDays, availableSlots }) => {
     const res = await fetch(`${BASE_URL}/api/doctor/schedule`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: await getClientAuthHeaders(),
         body: JSON.stringify({ doctorId, availableDays, availableSlots }),
     });
     if (!res.ok) throw new Error("Failed to update schedule");
@@ -21,7 +30,7 @@ export const acceptAppointment = async (doctorId, appointmentId) => {
         `${BASE_URL}/api/doctor/appointments/${appointmentId}/accept`,
         {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: await getClientAuthHeaders(),
             body: JSON.stringify({ doctorId }),
         }
     );
@@ -36,7 +45,7 @@ export const rejectAppointment = async (doctorId, appointmentId) => {
         `${BASE_URL}/api/doctor/appointments/${appointmentId}/reject`,
         {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: await getClientAuthHeaders(),
             body: JSON.stringify({ doctorId }),
         }
     );
@@ -51,7 +60,7 @@ export const completeAppointment = async (doctorId, appointmentId) => {
         `${BASE_URL}/api/doctor/appointments/${appointmentId}/complete`,
         {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: await getClientAuthHeaders(),
             body: JSON.stringify({ doctorId }),
         }
     );
@@ -69,7 +78,7 @@ export async function createPrescription({
 }) {
     const res = await fetch(`${BASE_URL}/api/doctor/prescriptions`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await getClientAuthHeaders(),
         body: JSON.stringify({
             doctorId,
             patientId,
@@ -90,7 +99,7 @@ export async function createPrescription({
 export async function updatePrescription(id, { diagnosis, medications, notes }) {
     const res = await fetch(`${BASE_URL}/api/doctor/prescriptions/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: await getClientAuthHeaders(),
         body: JSON.stringify({ diagnosis, medications, notes }),
     });
     if (!res.ok) throw new Error("Failed to update prescription");

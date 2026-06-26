@@ -12,13 +12,24 @@ async function getAdminId() {
     return session.user.id;
 }
 
+const getAuthHeaders = async () => {
+    const tokenRes = await auth.api.getToken({ headers: await headers() });
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${tokenRes?.token}`,
+    };
+};
+
 
 // Overview stats
 
 export const getAdminOverview = async () => {
     const res = await fetch(
         `${BASE_URL}/api/admin/overview`,
-        { cache: "no-store" }
+        {
+            cache: "no-store",
+            headers: await getAuthHeaders(),
+        }
     );
     if (!res.ok) return {};
     return res.json();
@@ -29,6 +40,7 @@ export async function getAdminUsers() {
     try {
         const res = await fetch(`${BASE_URL}/api/admin/users`, {
             cache: "no-store",
+            headers: await getAuthHeaders(),
         });
         if (!res.ok) return [];
         return await res.json();
@@ -43,6 +55,7 @@ export async function getAdminUsers() {
 export async function getDoctors() {
     const res = await fetch(`${BASE_URL}/api/admin/doctors`, {
         cache: "no-store",
+        headers: await getAuthHeaders(),
     });
     if (!res.ok) throw new Error("Failed to fetch doctors");
     return res.json();
@@ -51,6 +64,7 @@ export async function getDoctors() {
 export async function verifyDoctor(id) {
     const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/verify`, {
         method: "PATCH",
+        headers: await getAuthHeaders(),
     });
     if (!res.ok) throw new Error("Failed to verify doctor");
     return res.json();
@@ -59,6 +73,7 @@ export async function verifyDoctor(id) {
 export async function rejectDoctor(id) {
     const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/reject`, {
         method: "PATCH",
+        headers: await getAuthHeaders(),
     });
     if (!res.ok) throw new Error("Failed to reject doctor");
     return res.json();
@@ -67,6 +82,7 @@ export async function rejectDoctor(id) {
 export async function revokeDoctor(id) {
     const res = await fetch(`${BASE_URL}/api/admin/doctors/${id}/revoke`, {
         method: "PATCH",
+        headers: await getAuthHeaders(),
     });
     if (!res.ok) throw new Error("Failed to revoke doctor");
     return res.json();
@@ -80,7 +96,7 @@ export const getAdminAppointments = async (status = "all") => {
         ? `${BASE_URL}/api/admin/appointments`
         : `${BASE_URL}/api/admin/appointments?status=${status}`;
 
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store", headers: await getAuthHeaders(), });
     if (!res.ok) throw new Error("Failed to fetch appointments");
     return res.json();
 };
@@ -89,7 +105,7 @@ export const getAdminAppointments = async (status = "all") => {
 // GET /api/admin/payments
 
 export const getAdminPayments = async () => {
-    const res = await fetch(`${BASE_URL}/api/admin/payments`, { cache: "no-store" });
+    const res = await fetch(`${BASE_URL}/api/admin/payments`, { cache: "no-store", headers: await getAuthHeaders(), });
     if (!res.ok) throw new Error("Failed to fetch payments");
     return res.json();
 };
@@ -101,7 +117,7 @@ export const getAdminPayments = async () => {
 export const getAdminAnalytics = async () => {
     const res = await fetch(
         `${BASE_URL}/api/admin/analytics`,
-        { cache: "no-store" }
+        { cache: "no-store", headers: await getAuthHeaders(), }
     );
     if (!res.ok) return {};
     return res.json();
