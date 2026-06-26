@@ -292,3 +292,38 @@ select:focus {
 .bg-primary {
   background-color: var(--primary);
 }
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  border: none;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:visited {
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  transition: all var(--transition-base);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-hover);
+  color: var(--text-primary);
+}

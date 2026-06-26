@@ -13,6 +13,15 @@ export async function getUserId() {
     return session.user.id;
 }
 
+const getAuthHeaders = async () => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const tokenRes = await auth.api.getToken({ headers: await headers() });
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${tokenRes?.token}`,
+    };
+};
+
 
 
 // ── Overview ───────────────────────────────────────────────
@@ -20,8 +29,10 @@ export async function getUserId() {
 export const getPatientOverview = async () => {
     const userId = await getUserId();
     const res = await fetch(`${BASE_URL}/api/patient/overview?userId=${userId}`, {
-        cache: "no-store"
+        cache: "no-store",
+        headers: await getAuthHeaders(),
     });
+    if (!res.ok) throw new Error("Failed to fetch profile");
     return res.json()
 }
 
