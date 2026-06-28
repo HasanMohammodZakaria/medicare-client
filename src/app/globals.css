@@ -327,3 +327,9 @@ select:focus {
   background-color: var(--surface-hover);
   color: var(--text-primary);
 }
+
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

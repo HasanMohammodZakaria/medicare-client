@@ -1,44 +1,48 @@
-import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
-import { stripe } from '@/app/lib/stripe';
-import { auth } from '@/app/lib/auth';
+import { NextResponse } from "next/server";
+import { stripe } from "@/app/lib/stripe";
 
+export async function POST(req) {
+  const {
+    doctorId,
+    doctorName,
+    consultationFee,
+    appointmentDate,
+    appointmentsTime,
+    patientId,
+    patientEmail,
+  } = await req.json();
 
-
-export async function POST() {
   try {
-    const headersList = await headers()
-    const origin = headersList.get('origin')
-
-    const userSession = await auth.api.getSession({
-      headers: await headers()
-    })
-
-    const user = userSession.user
-
-    // Create Checkout Sessions from body params.
-    const session = await stripe.checkout.sessions.create({
-      customer_email: user?.email,
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: patientEmail || undefined,
       line_items: [
         {
-          // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-          price: '{{PRICE_ID}}',
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Consultation with ${doctorName}`,
+              description: `${appointmentDate} at ${appointmentsTime}`,
+            },
+            unit_amount: Math.round(parseFloat(consultationFee) * 100),
+          },
           quantity: 1,
         },
-        metadata: {
-          priceId: price_ID,
-          userId: user.id,
-          userEmail: user.email,
-        },
       ],
-      mode: 'payment',
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/doctors/${doctorId}`,
+      metadata: {
+        doctorId,
+        patientId: patientId || "guest",
+        appointmentDate,
+        appointmentsTime,
+        consultationFee: String(consultationFee),
+      },
     });
-    return NextResponse.redirect(session.url, 303)
+
+    return NextResponse.json({ url: checkoutSession.url });
   } catch (err) {
-    return NextResponse.json(
-      { error: err.message },
-      { status: err.statusCode || 500 }
-    )
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
