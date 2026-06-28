@@ -4,6 +4,7 @@ import FeaturedDoctors from "@/components/home/FeaturedDoctors";
 import MedicalSpecializations from "@/components/home/MedicalSpecializations";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import { getFeaturedDoctors } from "./lib/actions/public.actions";
+import { Suspense } from "react";
 
 
 export default async function Home() {
@@ -12,7 +13,9 @@ export default async function Home() {
     <div>
       <Banner />
       <MedicalSpecializations />
-      <FeaturedDoctors doctors={featuredDoctors} />
+      <Suspense fallback={<FeaturedDoctors loading={true} />}>
+        <FeaturedDoctors doctors={featuredDoctors} />
+      </Suspense>
       <WhyChooseUs />
     </div>
   );
