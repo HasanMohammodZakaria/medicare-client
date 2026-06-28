@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { MdSearch, MdFilterList, MdSort, MdClose } from "react-icons/md";
 import DoctorCard from "./DoctorCard";
+import Pagination from "@/components/ui/Pagination";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
@@ -26,33 +27,55 @@ const selectStyle = {
 };
 
 export default function AllDoctors({
-  initialDoctors,
+  initialDoctors, // doctor array
+  totalDoctors, // মোট কতটা doctor (backend থেকে)
+  totalPages, // মোট কতটা page
   specializations,
-  initialFilters,
+  initialFilters, // { search, specialization, sortBy, page }
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const [search, setSearch] = useState(initialFilters.search);
+  const [search, setSearch] = useState(initialFilters.search || "");
   const [specialization, setSpecialization] = useState(
-    initialFilters.specialization,
+    initialFilters.specialization || "all",
   );
-  const [sortBy, setSortBy] = useState(initialFilters.sortBy);
+  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "newest");
 
+  const currentPage = parseInt(initialFilters.page) || 1;
+
+  // ─── Filter/Page apply করো ───────────────────────────────────
   const applyFilters = (overrides = {}) => {
-    const merged = { search, specialization, sortBy, ...overrides };
+    const merged = { search, specialization, sortBy, page: 1, ...overrides };
     const params = new URLSearchParams();
 
     if (merged.search) params.set("search", merged.search);
-    // ✅ specialization সবসময় set করো — "all" হলেও রাখো যাতে page জানতে পারে
     if (merged.specialization && merged.specialization !== "all")
       params.set("specialization", merged.specialization);
     if (merged.sortBy && merged.sortBy !== "newest")
       params.set("sortBy", merged.sortBy);
+    if (merged.page > 1) params.set("page", merged.page);
 
     const qs = params.toString();
     startTransition(() => router.push(qs ? `${pathname}?${qs}` : pathname));
+  };
+
+  // Page বদলালে
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (specialization && specialization !== "all")
+      params.set("specialization", specialization);
+    if (sortBy && sortBy !== "newest") params.set("sortBy", sortBy);
+    if (newPage > 1) params.set("page", newPage);
+
+    const qs = params.toString();
+    startTransition(() => {
+      router.push(qs ? `${pathname}?${qs}` : pathname);
+      // উপরে scroll করো
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   };
 
   const clearFilters = () => {
@@ -67,9 +90,14 @@ export default function AllDoctors({
     (specialization && specialization !== "all") ||
     (sortBy && sortBy !== "newest");
 
+  // Showing X-Y of Z
+  const perPage = 10;
+  const from = (currentPage - 1) * perPage + 1;
+  const to = Math.min(currentPage * perPage, totalDoctors);
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--background)" }}>
-      {/* Page Header */}
+      {/* ── Page Header ── */}
       <div
         style={{
           background:
@@ -112,12 +140,12 @@ export default function AllDoctors({
             marginInline: "auto",
           }}
         >
-          {initialDoctors.length} verified doctors ready to help you
+          {totalDoctors} verified doctors ready to help you
         </p>
       </div>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
-        {/* Filter Bar */}
+        {/* ── Filter Bar ── */}
         <div
           style={{
             background: "var(--surface)",
@@ -131,7 +159,7 @@ export default function AllDoctors({
             alignItems: "center",
           }}
         >
-          {/* Search — ✅ শুধু নাম দিয়ে */}
+          {/* Search */}
           <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
             <MdSearch
               size={18}
@@ -257,26 +285,32 @@ export default function AllDoctors({
           )}
         </div>
 
-        {/* Results count */}
-        <p
-          style={{
-            margin: "0 0 20px",
-            fontSize: 13,
-            color: "var(--text-muted)",
-            opacity: isPending ? 0.4 : 1,
-          }}
-        >
-          Showing{" "}
-          <strong style={{ color: "var(--text-primary)" }}>
-            {initialDoctors.length}
-          </strong>{" "}
-          doctors
-          {specialization &&
-            specialization !== "all" &&
-            ` in ${specialization}`}
-        </p>
+        {/* ── Results count ── */}
+        {totalDoctors > 0 && (
+          <p
+            style={{
+              margin: "0 0 20px",
+              fontSize: 13,
+              color: "var(--text-muted)",
+              opacity: isPending ? 0.4 : 1,
+            }}
+          >
+            Showing{" "}
+            <strong style={{ color: "var(--text-primary)" }}>
+              {from}–{to}
+            </strong>{" "}
+            of{" "}
+            <strong style={{ color: "var(--text-primary)" }}>
+              {totalDoctors}
+            </strong>{" "}
+            doctors
+            {specialization &&
+              specialization !== "all" &&
+              ` in ${specialization}`}
+          </p>
+        )}
 
-        {/* Doctor Grid */}
+        {/* ── Doctor Grid ── */}
         {initialDoctors.length === 0 ? (
           <div
             style={{
@@ -340,6 +374,13 @@ export default function AllDoctors({
             ))}
           </div>
         )}
+
+        {/* ── Pagination ── */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );
