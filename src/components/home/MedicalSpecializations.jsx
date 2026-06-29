@@ -43,7 +43,7 @@ const specializations = [
 export default function MedicalSpecializations() {
   return (
     <section className="py-20 bg-base">
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 ">
+      <div className="max-w-7xl mx-auto px-5 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
           <span
@@ -65,54 +65,51 @@ export default function MedicalSpecializations() {
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        {/* Cards — 2 column grid, each card is horizontal */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-10">
           {specializations.map((item) => {
             const Icon = item.icon;
 
             return (
               <div
                 key={item.id}
-                className="group bg-card border border-base rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2 hover:bg-card-hover"
-                style={{
-                  boxShadow: "var(--shadow-md)",
-                }}
+                className="group bg-card border border-base rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:bg-card-hover"
+                style={{ boxShadow: "var(--shadow-md)" }}
               >
-                {/* Small Badge */}
-                <span
-                  className="inline-block text-xs font-medium px-3 py-1 rounded-full mb-5 text-primary"
-                  style={{
-                    background:
-                      "color-mix(in srgb, var(--primary) 10%, transparent)",
-                  }}
-                >
-                  Specialist
-                </span>
-
-                {/* Icon */}
+                {/* Icon — left side */}
                 <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110"
+                  className="w-16 h-16 rounded-2xl flex-0 flex items-center justify-center transition-all duration-300 group-hover:scale-110"
                   style={{
                     background:
                       "color-mix(in srgb, var(--primary) 15%, transparent)",
                   }}
                 >
-                  <Icon className={`text-4xl ${item.color}`} />
+                  <Icon className={`text-3xl ${item.color}`} />
                 </div>
 
-                {/* Title */}
-                <h3 className="text-2xl font-bold text-main mb-3">
-                  {item.title}
-                </h3>
+                {/* Content — right side */}
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span
+                    className="text-xs font-medium px-2 py-0.5 rounded-full w-fit text-primary"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--primary) 10%, transparent)",
+                    }}
+                  >
+                    Specialist
+                  </span>
 
-                {/* Description */}
-                <p className="text-sub leading-7 mb-6">{item.description}</p>
+                  <h3 className="text-lg font-bold text-main">{item.title}</h3>
 
-                {/* Learn More */}
-                <button className="inline-flex items-center gap-2 text-primary font-semibold transition-all duration-300 group-hover:gap-3">
-                  Learn More
-                  <FaArrowRight className="text-sm" />
-                </button>
+                  <p className="text-sub text-sm leading-6">
+                    {item.description}
+                  </p>
+
+                  <button className="inline-flex items-center gap-1.5 text-primary text-sm font-semibold mt-1 transition-all duration-300 group-hover:gap-2.5 w-fit">
+                    Learn More
+                    <FaArrowRight className="text-xs" />
+                  </button>
+                </div>
               </div>
             );
           })}
