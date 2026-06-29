@@ -8,6 +8,7 @@ const nextConfig = {
         hostname: '**',
         port: '',
       },
+      { protocol: "https", hostname: "i.ibb.co" },
 
     ],
   },

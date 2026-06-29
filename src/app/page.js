@@ -28,6 +28,7 @@
 import Banner from "@/components/home/Banner";
 import FeaturedDoctors from "@/components/home/FeaturedDoctors";
 import MedicalSpecializations from "@/components/home/MedicalSpecializations";
+import PatientReviews from "@/components/home/PatientReviews";
 import PlatformStats from "@/components/home/PlatformStats";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 
@@ -40,6 +41,7 @@ export default function Home() {
       <FeaturedDoctors />
       <MedicalSpecializations />
       <PlatformStats />
+      <PatientReviews />
       <WhyChooseUs />
     </div>
   );

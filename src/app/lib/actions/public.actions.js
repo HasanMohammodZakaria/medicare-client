@@ -78,3 +78,13 @@ export const getPlatformStats = async () => {
         return { doctors: 0, patients: 0, appointments: 0, reviews: 0 };
     }
 };
+
+export const getFeaturedReviews = async () => {
+    try {
+        const res = await fetch(`${BASE_URL}/api/reviews/featured`, {
+            cache: "no-store",
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch { return []; }
+};
