@@ -22,8 +22,7 @@ import {
   MdCheckCircle,
   MdDelete,
 } from "react-icons/md";
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+import Image from "next/image";
 
 function formatDate(d) {
   if (!d) return "—";
@@ -70,17 +69,18 @@ function StatCard({ icon: Icon, label, value, color }) {
 // ─── Medication Row ───────────────────────────────────────────────────────────
 
 function MedicationRow({ med, index, onChange, onRemove, readonly }) {
-  return (
-    <div
-      className="flex flex-col sm:flex-row gap-2 p-3 rounded-xl border"
-      style={{
-        background: "var(--color-base-200)",
-        borderColor: "var(--color-base-300)",
-      }}
-    >
-      <div className="flex items-center gap-2 flex-0">
+  if (readonly) {
+    return (
+      <div
+        className="flex flex-wrap items-center gap-2 p-3 rounded-xl border"
+        style={{
+          background: "var(--color-base-200)",
+          borderColor: "var(--color-base-300)",
+        }}
+      >
         <span
-          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-0"
+          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-
+          -0"
           style={{
             background: "var(--color-primary)",
             color: "var(--color-primary-content)",
@@ -88,53 +88,84 @@ function MedicationRow({ med, index, onChange, onRemove, readonly }) {
         >
           {index + 1}
         </span>
+        <span
+          className="font-semibold text-sm"
+          style={{ color: "var(--color-base-content)" }}
+        >
+          {med.name}
+        </span>
+        <span
+          className="px-2 py-0.5 rounded-full text-xs"
+          style={{
+            background: "var(--color-base-300)",
+            color: "var(--color-base-content)",
+          }}
+        >
+          {med.dosage}
+        </span>
+        <span
+          className="px-2 py-0.5 rounded-full text-xs"
+          style={{
+            background: "var(--color-primary)",
+            color: "var(--color-primary-content)",
+            opacity: 0.85,
+          }}
+        >
+          {med.duration}
+        </span>
       </div>
-      {readonly ? (
-        <div className="flex flex-wrap gap-3 flex-1">
-          <span
-            className="font-semibold text-sm"
-            style={{ color: "var(--color-base-content)" }}
-          >
-            {med.name}
-          </span>
-          <span
-            className="px-2 py-0.5 rounded-full text-xs"
-            style={{
-              background: "var(--color-base-300)",
-              color: "var(--color-base-content)",
-            }}
-          >
-            {med.dosage}
-          </span>
-          <span
-            className="px-2 py-0.5 rounded-full text-xs"
-            style={{
-              background: "var(--color-primary)",
-              color: "var(--color-primary-content)",
-              opacity: 0.85,
-            }}
-          >
-            {med.duration}
-          </span>
-        </div>
-      ) : (
-        <>
+    );
+  }
+
+  return (
+    <div
+      className="p-3 rounded-xl border"
+      style={{
+        background: "var(--color-base-200)",
+        borderColor: "var(--color-base-300)",
+      }}
+    >
+      {/* Number + Delete row */}
+      <div className="flex items-center justify-between mb-2">
+        <span
+          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+          style={{
+            background: "var(--color-primary)",
+            color: "var(--color-primary-content)",
+          }}
+        >
+          {index + 1}
+        </span>
+        <button
+          type="button"
+          onClick={() => onRemove(index)}
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:opacity-80"
+          style={{ background: "#fef2f2", color: "#ef4444" }}
+        >
+          <MdDelete className="text-sm" />
+        </button>
+      </div>
+
+      {/* Inputs — always vertical stack, side by side on lg+ */}
+      {/* Inputs */}
+      <div className="grid grid-cols-1 gap-2 mt-2">
+        <input
+          defaultValue={med.name}
+          onChange={(e) => onChange(index, "name", e.target.value)}
+          placeholder="Medicine name"
+          className="w-full rounded-lg px-3 py-2 text-sm outline-none border"
+          style={{
+            background: "var(--color-base-100)",
+            color: "var(--color-base-content)",
+            borderColor: "var(--color-base-300)",
+          }}
+        />
+        <div className="grid grid-cols-2 gap-2">
           <input
-            value={med.name}
-            onChange={(e) => onChange(index, "name", e.target.value)}
-            placeholder="Medicine name"
-            className="flex-1 min-w-0 rounded-lg px-3 py-1.5 text-sm outline-none border"
-            style={{
-              background: "var(--color-base-100)",
-              color: "var(--color-base-content)",
-              borderColor: "var(--color-base-300)",
-            }}
-          />
-          <input
-            value={med.dosage}
+            defaultValue={med.dosage}
             onChange={(e) => onChange(index, "dosage", e.target.value)}
             placeholder="Dosage (e.g. 500mg)"
-            className="w-28 rounded-lg px-3 py-1.5 text-sm outline-none border"
+            className="w-full rounded-lg px-3 py-2 text-sm outline-none border"
             style={{
               background: "var(--color-base-100)",
               color: "var(--color-base-content)",
@@ -142,26 +173,18 @@ function MedicationRow({ med, index, onChange, onRemove, readonly }) {
             }}
           />
           <input
-            value={med.duration}
+            defaultValue={med.duration}
             onChange={(e) => onChange(index, "duration", e.target.value)}
             placeholder="Duration (e.g. 7 days)"
-            className="w-32 rounded-lg px-3 py-1.5 text-sm outline-none border"
+            className="w-full rounded-lg px-3 py-2 text-sm outline-none border"
             style={{
               background: "var(--color-base-100)",
               color: "var(--color-base-content)",
               borderColor: "var(--color-base-300)",
             }}
           />
-          <button
-            type="button"
-            onClick={() => onRemove(index)}
-            className="w-7 h-7 rounded-lg flex items-center justify-center flex-0 transition-all hover:opacity-80"
-            style={{ background: "#fef2f2", color: "#ef4444" }}
-          >
-            <MdDelete className="text-sm" />
-          </button>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -199,10 +222,11 @@ function PrescriptionModal({
   const addMed = () =>
     setMedications((prev) => [...prev, { name: "", dosage: "", duration: "" }]);
 
-  const changeMed = (i, field, val) =>
+  const changeMed = (i, field, val) => {
     setMedications((prev) =>
       prev.map((m, idx) => (idx === i ? { ...m, [field]: val } : m)),
     );
+  };
 
   const removeMed = (i) =>
     setMedications((prev) => prev.filter((_, idx) => idx !== i));
@@ -216,12 +240,11 @@ function PrescriptionModal({
       toast.error("Please enter a diagnosis");
       return;
     }
-    const validMeds = medications.filter((m) => m.name.trim());
+    const validMeds = medications.filter((m) => m.name && m.name.trim() !== "");
     if (validMeds.length === 0) {
       toast.error("Please add at least one medication");
       return;
     }
-
     onSubmit({
       doctorId,
       patientId: selectedAppt?.patientId ?? prescription?.patientId,
@@ -385,7 +408,7 @@ function PrescriptionModal({
             </div>
           )}
 
-          {/* Edit mode — show patient info */}
+          {/* Edit mode — patient info */}
           {isEdit && (
             <div
               className="flex items-center gap-3 px-4 py-3 rounded-xl border"
@@ -466,7 +489,7 @@ function PrescriptionModal({
             <div className="space-y-2">
               {medications.map((med, i) => (
                 <MedicationRow
-                  key={i}
+                  key={`med-${i}-${medications.length}`}
                   med={med}
                   index={i}
                   onChange={changeMed}
@@ -556,21 +579,28 @@ function PrescriptionCard({ rx, onEdit }) {
         borderColor: "var(--color-base-300)",
       }}
     >
-      {/* Top accent */}
       <div
         className="h-1 w-full"
         style={{ background: "var(--color-primary)" }}
       />
-
       <div className="p-5 space-y-4">
-        {/* Header row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center flex-0"
               style={{ background: "var(--color-primary)", opacity: 0.9 }}
             >
-              <MdPerson className="text-white text-lg" />
+              {rx.patientImage ? (
+                <Image
+                  src={rx.patientImage}
+                  alt={rx.patientName || "Patient"}
+                  width={44}
+                  height={44}
+                  style={{ objectFit: "cover", borderRadius: 10 }}
+                />
+              ) : (
+                <MdPerson className="text-white text-lg" />
+              )}
             </div>
             <div className="min-w-0">
               <p
@@ -596,7 +626,6 @@ function PrescriptionCard({ rx, onEdit }) {
           </span>
         </div>
 
-        {/* Diagnosis */}
         <div
           className="px-4 py-3 rounded-xl"
           style={{ background: "var(--color-base-200)" }}
@@ -612,7 +641,6 @@ function PrescriptionCard({ rx, onEdit }) {
           </p>
         </div>
 
-        {/* Medications preview */}
         <div>
           <p
             className="text-xs font-semibold uppercase tracking-wide mb-2"
@@ -638,7 +666,6 @@ function PrescriptionCard({ rx, onEdit }) {
           )}
         </div>
 
-        {/* Notes */}
         {rx.notes && (
           <div
             className="px-4 py-2 rounded-xl border-l-2"
@@ -656,7 +683,6 @@ function PrescriptionCard({ rx, onEdit }) {
           </div>
         )}
 
-        {/* Footer */}
         <div className="flex items-center justify-between pt-1">
           <div
             className="flex items-center gap-1.5 text-xs"
@@ -692,7 +718,7 @@ export default function DoctorPrescriptions({
   const doctorId = session?.user?.id;
 
   const [prescriptions, setPrescriptions] = useState(initialPrescriptions);
-  const [modal, setModal] = useState(null); // "create" | "edit"
+  const [modal, setModal] = useState(null);
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -775,7 +801,6 @@ export default function DoctorPrescriptions({
 
   return (
     <div className="w-full space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1
@@ -805,7 +830,6 @@ export default function DoctorPrescriptions({
         </button>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           icon={MdAssignment}
@@ -827,7 +851,6 @@ export default function DoctorPrescriptions({
         />
       </div>
 
-      {/* Search */}
       <div className="relative">
         <MdSearch
           className="absolute left-4 top-1/2 -translate-y-1/2 text-xl"
@@ -848,7 +871,6 @@ export default function DoctorPrescriptions({
         />
       </div>
 
-      {/* Grid / Empty */}
       {filtered.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -907,7 +929,6 @@ export default function DoctorPrescriptions({
         </div>
       )}
 
-      {/* Modals */}
       <AnimatePresence>
         {(modal === "create" || modal === "edit") && (
           <PrescriptionModal
