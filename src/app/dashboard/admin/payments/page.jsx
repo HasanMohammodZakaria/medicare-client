@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAdminPayments } from "@/app/lib/actions/admin.action";
 import AdminPayments from "@/components/admin/AdminPayments";
 

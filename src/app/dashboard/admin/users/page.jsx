@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAdminUsers } from "@/app/lib/actions/admin.action";
 import ManageUsers from "@/components/admin/ManageUsers";
 

@@ -1,6 +1,4 @@
-// app/dashboard/patient/appointments/page.jsx
-// SERVER COMPONENT
-
+export const dynamic = "force-dynamic";
 import { getPatientAppointments } from "@/app/lib/actions/patient.action";
 import PatientAppointments from "@/components/patient/PatientAppointments";
 

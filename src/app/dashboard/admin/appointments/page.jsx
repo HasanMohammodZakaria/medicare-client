@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAdminAppointments } from "@/app/lib/actions/admin.action";
 import ManageAppointments from "@/components/admin/ManageAppointments";
 

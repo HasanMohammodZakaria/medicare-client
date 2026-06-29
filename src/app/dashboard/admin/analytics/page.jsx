@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAdminAnalytics } from "@/app/lib/actions/admin.action";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
