@@ -6,9 +6,9 @@ A modern Hospital Appointment & Healthcare Management System that allows patient
 
 ## 🌐 Live Links
 
-* 🚀 **Live Website:** https://your-live-link.com
-* 💻 **Client Repository:** https://github.com/your-username/medicare-client
-* ⚙️ **Server Repository:** https://github.com/your-username/medicare-server
+* 🚀 **Live Website:** https://medicare-client-smoky.vercel.app
+* 💻 **Client Repository:** https://github.com/HasanMohammodZakaria/medicare-client
+* ⚙️ **Server Repository:** https://github.com/HasanMohammodZakaria/midicare-server
 
 ---
 
