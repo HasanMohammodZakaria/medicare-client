@@ -1,7 +1,8 @@
 import AboutHero from "@/components/about/AboutHero";
-import AboutStatistics from "@/components/about/AboutStatistiex";
+
 import OurStory from "@/components/about/OurStory";
 import WhyChooseAbout from "@/components/about/WhyChoseAbout";
+import PlatformStats from "@/components/home/PlatformStats";
 
 const AboutUsPage = () => {
   return (
@@ -9,7 +10,7 @@ const AboutUsPage = () => {
       <AboutHero />
       <OurStory />
       <WhyChooseAbout />
-      <AboutStatistics />
+      <PlatformStats />
     </div>
   );
 };

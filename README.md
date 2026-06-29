@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏥 MediNexa Connect
 
-## Getting Started
+A modern Hospital Appointment & Healthcare Management System that allows patients to find doctors, book appointments, make secure online payments, receive digital prescriptions, and manage healthcare services. Doctors can manage appointments, schedules, and prescriptions, while administrators can monitor users, doctors, appointments, and payments through a dedicated dashboard.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Links
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* 🚀 **Live Website:** https://your-live-link.com
+* 💻 **Client Repository:** https://github.com/your-username/medicare-client
+* ⚙️ **Server Repository:** https://github.com/your-username/medicare-server
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📖 Project Overview
 
-## Learn More
+MediNexa Connect is a modern healthcare platform built with Next.js, Express.js, and MongoDB. It provides a complete hospital appointment management solution with role-based dashboards for Patients, Doctors, and Admins. The platform includes secure authentication, appointment booking, online payments, prescription management, doctor reviews, advanced search, analytics, and a responsive user experience.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* 👨‍⚕️ Doctor Appointment Booking
+* 🔐 Secure Authentication
+* 💳 Stripe Payment Integration
+* 💊 Prescription Management
+* ⭐ Doctor Reviews & Ratings
+* 🔍 Doctor Search & Filtering
+* 📊 Dashboard for Patient, Doctor & Admin
+* 🌙 Dark & Light Theme
+* 📱 Fully Responsive Design
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 🎨 Frontend
+
+- ⚛️ Next.js
+- ⚛️ React.js
+- 🛣️ Next.js App Router
+- 🎨 Tailwind CSS
+- 🎭 HeroUI
+- 💅 Styled Components
+- 🌓 Next Themes
+- 🎬 Framer Motion
+- 📊 Recharts
+- 🎯 React Icons
+- ✨ Gravity UI Icons
+- 🍞 React Toastify
+
+### ⚙️ Backend
+
+- 🟢 Node.js
+- 🚀 Express.js
+- 🍃 MongoDB
+- 🔑 Better Auth
+- 🔐 JWT
+- 💳 Stripe---
