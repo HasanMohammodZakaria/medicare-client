@@ -68,3 +68,13 @@ export const getDoctorById = async (id) => {
         return res.json();
     } catch { return null; }
 };
+
+export const getPlatformStats = async () => {
+    try {
+        const res = await fetch(`${BASE_URL}/api/stats`, { cache: "no-store" });
+        if (!res.ok) return { doctors: 0, patients: 0, appointments: 0, reviews: 0 };
+        return res.json();
+    } catch {
+        return { doctors: 0, patients: 0, appointments: 0, reviews: 0 };
+    }
+};
