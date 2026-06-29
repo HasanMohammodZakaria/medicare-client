@@ -1,7 +1,3 @@
-// app/booking/success/page.jsx
-// কাজ: Payment হওয়ার পরে Stripe এখানে redirect করে
-// Stripe থেকে session_id আসে URL এ — সেটা দিয়ে details দেখাই
-
 import { stripe } from "@/app/lib/stripe";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -17,15 +13,12 @@ export const metadata = { title: "Booking Confirmed | MediNexa" };
 export default async function SuccessPage({ searchParams }) {
   const { session_id } = await searchParams;
 
-  // session_id না থাকলে home এ redirect
   if (!session_id) redirect("/");
 
-  // ✅ Stripe থেকে session details আনো
   const session = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ["line_items"],
   });
 
-  // Payment complete না হলে home এ redirect
   if (session.status !== "complete") redirect("/");
 
   const { appointmentDate, appointmentsTime, consultationFee } =

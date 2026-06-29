@@ -3,7 +3,7 @@
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 1) return null; // মাত্র ১ page হলে দেখাবে ন
+  if (totalPages <= 1) return null;
 
   const getPageNumbers = () => {
     const pages = [];

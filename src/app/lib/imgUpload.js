@@ -36,10 +36,10 @@ export const imageUpload = async (image) => {
 
 
     return {
-        url: data.data.url,           // direct image URL
-        displayUrl: data.data.display_url, // display URL
-        deleteUrl: data.data.delete_url,   // delete করার URL
-        thumb: data.data.thumb?.url,       // thumbnail URL
+        url: data.data.url,
+        displayUrl: data.data.display_url,
+        deleteUrl: data.data.delete_url,
+        thumb: data.data.thumb?.url,
         size: data.data.size,
         name: data.data.image?.filename,
     };

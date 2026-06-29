@@ -1,5 +1,4 @@
 "use client";
-// app/dashboard/admin/manage-appointments/_components/ManageAppointmentsClient.jsx
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,15 +7,12 @@ import {
   MdSearch,
   MdRefresh,
   MdCalendarMonth,
-  MdPerson,
   MdLocalHospital,
   MdAccessTime,
   MdCheckCircle,
   MdCancel,
   MdPending,
 } from "react-icons/md";
-import Calendar from "@gravity-ui/icons/Calendar";
-import Person from "@gravity-ui/icons/Person";
 
 // ── Status config ──────────────────────────────────────────────────
 const STATUS_CONFIG = {

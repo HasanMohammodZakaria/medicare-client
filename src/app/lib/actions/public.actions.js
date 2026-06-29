@@ -14,20 +14,6 @@ export const getFeaturedDoctors = async () => {
     } catch { return []; }
 };
 
-// export const getDoctors = async ({ search, specialization, sortBy } = {}) => {
-//     try {
-//         const params = new URLSearchParams();
-//         if (search) params.set("search", search);
-//         if (specialization && specialization !== "all") params.set("specialization", specialization);
-//         if (sortBy) params.set("sortBy", sortBy);
-
-//         const res = await fetch(`${BASE_URL}/api/doctors?${params}`, {
-//             cache: "no-store",
-//         });
-//         if (!res.ok) return [];
-//         return res.json();
-//     } catch { return []; }
-// };
 
 export const getDoctors = async ({ search, specialization, sortBy, page = 1, limit = 10 } = {}) => {
     try {

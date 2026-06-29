@@ -8,10 +8,7 @@ import {
   MdCalendarMonth,
   MdAttachMoney,
   MdVerified,
-  MdPendingActions,
-  MdBlockFlipped,
   MdStar,
-  MdTrendingUp,
   MdPersonOff,
   MdThumbUp,
 } from "react-icons/md";
@@ -260,9 +257,6 @@ const APPT_COLORS = {
 };
 
 export default function AdminOverview({ overview = {}, analytics = {} }) {
-  // ── Dark mode axis color fix ──────────────────────────────────────────────
-  // CSS variable গুলো Recharts tick এ সরাসরি কাজ করে না।
-  // useEffect দিয়ে computed color নিয়ে state এ রাখছি।
   const [axisColor, setAxisColor] = useState("#888");
   const [primaryColor, setPrimaryColor] = useState("#6366f1");
 
@@ -277,7 +271,6 @@ export default function AdminOverview({ overview = {}, analytics = {} }) {
 
     getColors();
 
-    // Theme toggle (class change on html) detect করো
     const observer = new MutationObserver(getColors);
     observer.observe(document.documentElement, {
       attributes: true,

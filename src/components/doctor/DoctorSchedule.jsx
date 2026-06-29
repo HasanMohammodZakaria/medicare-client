@@ -1,4 +1,3 @@
-// components/doctor/DoctorSchedule.jsx
 "use client";
 
 import { useState } from "react";
@@ -159,7 +158,7 @@ export default function DoctorSchedulePage({ initialSchedule = {}, doctorId }) {
   const [slots, setSlots] = useState(initialSchedule.availableSlots ?? []);
   const [customSlot, setCustomSlot] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("days"); // "days" | "slots"
+  const [activeTab, setActiveTab] = useState("days");
 
   // ── Day toggle ───────────────────────────────────────
   const toggleDay = (day) => {

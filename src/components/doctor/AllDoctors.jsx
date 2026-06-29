@@ -27,11 +27,11 @@ const selectStyle = {
 };
 
 export default function AllDoctors({
-  initialDoctors, // doctor array
-  totalDoctors, // মোট কতটা doctor (backend থেকে)
-  totalPages, // মোট কতটা page
+  initialDoctors,
+  totalDoctors,
+  totalPages,
   specializations,
-  initialFilters, // { search, specialization, sortBy, page }
+  initialFilters,
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -45,7 +45,6 @@ export default function AllDoctors({
 
   const currentPage = parseInt(initialFilters.page) || 1;
 
-  // ─── Filter/Page apply করো ───────────────────────────────────
   const applyFilters = (overrides = {}) => {
     const merged = { search, specialization, sortBy, page: 1, ...overrides };
     const params = new URLSearchParams();
@@ -61,7 +60,6 @@ export default function AllDoctors({
     startTransition(() => router.push(qs ? `${pathname}?${qs}` : pathname));
   };
 
-  // Page বদলালে
   const handlePageChange = (newPage) => {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
@@ -73,7 +71,7 @@ export default function AllDoctors({
     const qs = params.toString();
     startTransition(() => {
       router.push(qs ? `${pathname}?${qs}` : pathname);
-      // উপরে scroll করো
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   };

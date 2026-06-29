@@ -115,18 +115,6 @@ export async function getCompletedAppointmentsForPrescription() {
 }
 
 
-// GET /api/doctor/profile
-// export const getDoctorProfile = async () => {
-//     const doctorId = await getDoctorId();
-//     const res = await fetch(
-//         `${BASE_URL}/api/doctor/profile?doctorId=${doctorId}`,
-//         { cache: "no-store" }
-//     );
-//     if (!res.ok) throw new Error("Failed to fetch doctor profile");
-//     return res.json();
-// };
-
-
 export const getDoctorProfile = async () => {
     const doctorId = await getDoctorId();
     const res = await fetch(

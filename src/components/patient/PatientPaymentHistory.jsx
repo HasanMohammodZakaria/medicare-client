@@ -1,5 +1,4 @@
 "use client";
-// app/dashboard/patient/payment-history/_components/PatientPaymentHistory.jsx
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";

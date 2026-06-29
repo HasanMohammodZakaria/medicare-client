@@ -34,7 +34,6 @@ export default function ImageUploader({
   const handleFile = async (file) => {
     if (!file) return;
 
-    // ✅ lowercase এ convert করে check — .JPG .PNG সব কাজ করবে
     const allowedTypes = [
       "image/jpeg",
       "image/jpg",
@@ -47,7 +46,6 @@ export default function ImageUploader({
       return;
     }
 
-    // ✅ 2MB limit — logic আর message দুটোই ঠিক
     if (file.size > 2 * 1024 * 1024) {
       toast.error("File size must be under 2MB.");
       return;
@@ -84,11 +82,10 @@ export default function ImageUploader({
     if (file) handleFile(file);
   };
 
-  // ✅ Remove — preview clear + parent কে "" দিয়ে জানানো
   const handleRemove = () => {
     if (preview?.startsWith("blob:")) revokeImagePreview(preview);
     setPreview("");
-    onUpload?.(""); // parent এ formData.image = "" হবে
+    onUpload?.("");
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -214,7 +211,6 @@ export default function ImageUploader({
                 : "No image selected"}
           </p>
 
-          {/* ✅ lowercase + সঠিক size limit */}
           <p
             style={{
               margin: "0 0 12px",
@@ -251,7 +247,6 @@ export default function ImageUploader({
               {preview ? "Change" : "Choose File"}
             </button>
 
-            {/* ✅ Remove button — --danger-subtle নেই তাই color-mix দিয়ে করা */}
             {preview && (
               <button
                 type="button"

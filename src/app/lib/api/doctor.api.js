@@ -5,12 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 // ── client-side auth header ──
 const getClientAuthHeaders = async () => {
-    // const { data, error } = await authClient.getToken();
 
-    // return {
-    //     "Content-Type": "application/json",
-    //     "Authorization": `Bearer ${data}`,
-    // };
     const { data, error } = await authClient.token();
 
     if (error) {

@@ -12,10 +12,7 @@ import {
   MdDelete,
   MdBlock,
   MdCheckCircle,
-  MdClose,
-  MdFilterList,
   MdPerson,
-  MdEmail,
   MdDateRange,
   MdAdminPanelSettings,
   MdMedicalServices,
@@ -390,7 +387,7 @@ export default function ManageUsers({ initialUsers }) {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [modal, setModal] = useState(null); // { type, user }
+  const [modal, setModal] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Stats

@@ -1,5 +1,4 @@
 "use client";
-// app/dashboard/admin/payments/_components/AdminPaymentsClient.jsx
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";

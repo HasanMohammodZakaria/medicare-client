@@ -1,12 +1,22 @@
+import { authClient } from "../auth-client";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 // ── client-side auth header ──
 const getClientAuthHeaders = async () => {
-    const { data } = await authClient.getToken();
+    const { data, error } = await authClient.token();
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    if (!data?.token) {
+        throw new Error("JWT Token not found");
+    }
+
     return {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${data?.token}`,
+        Authorization: `Bearer ${data.token}`,
     };
 }
 
