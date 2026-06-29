@@ -44,7 +44,14 @@ export const getDoctorAppointments = async (status = "all") => {
         ? `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}`
         : `${BASE_URL}/api/doctor/appointments?doctorId=${doctorId}&status=${status}`;
     const res = await fetch(url, { cache: "no-store", headers: await getAuthHeaders(), });
-    if (!res.ok) throw new Error("Failed to fetch appointments");
+    if (!res.ok) {
+        const errorText = await res.text();
+
+        console.log("Status:", res.status);
+        console.log("Backend:", errorText);
+
+        throw new Error(errorText);
+    }
     return res.json();
 };
 

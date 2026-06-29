@@ -1,8 +1,5 @@
 "use client";
 
-// app/dashboard/patient/_components/PatientOverviewClient.jsx
-// ✅ এটা Client Component — animation, interactivity এখানে
-
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -235,7 +232,7 @@ export default function PatientOverviewClient({
                 Book a doctor to get started
               </p>
               <Link
-                href="/find-doctors"
+                href="/doctors"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg font-medium transition-colors"
               >
                 Find a Doctor

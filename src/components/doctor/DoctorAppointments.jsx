@@ -316,7 +316,8 @@ export default function DoctorAppointments({ initialAppointments, doctorId }) {
         }, 1500);
       }
       setModal(null);
-    } catch {
+    } catch (err) {
+      console.error("Action error:", err);
       toast.error("Something went wrong. Try again.");
     } finally {
       setActionLoading(false);

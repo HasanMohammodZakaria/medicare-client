@@ -11,6 +11,7 @@ import {
 } from "react-icons/md";
 import Link from "next/link";
 import { authClient } from "@/app/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const TIME_SLOTS = [
   "09:00 AM",
@@ -27,10 +28,18 @@ export default function BookingClient({ doctor }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const image = doctor.profileImage || doctor.userImage;
 
   const handlePayment = async () => {
+    if (!session?.user) {
+      toast.error("Please login to book an appointment");
+      router.push(
+        `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`,
+      );
+      return;
+    }
     if (!date) return toast.error("Please select a date");
     if (!time) return toast.error("Please select a time slot");
 
@@ -40,7 +49,7 @@ export default function BookingClient({ doctor }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          doctorId: String(doctor._id),
+          doctorId: doctor.userId,
           doctorName: doctor.doctorName,
           consultationFee: doctor.consultationFee,
           appointmentDate: date,
